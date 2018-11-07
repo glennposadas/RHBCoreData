@@ -1,7 +1,7 @@
 import CoreData
 
 public extension NSPersistentContainer {
-    func loadPersistentStoresAsync(_ block: @escaping ([(NSPersistentStoreDescription, Error)]) -> Void) {
+    func loadPersistentStoresAsync(completionQueue: DispatchQueue = .main, _ block: @escaping ([(NSPersistentStoreDescription, Error)]) -> Void) {
         let group = DispatchGroup()
         persistentStoreDescriptions.forEach {
             $0.shouldAddStoreAsynchronously = true
@@ -14,7 +14,7 @@ public extension NSPersistentContainer {
             }
             group.leave()
         }
-        group.notify(queue: .main) {
+        group.notify(queue: completionQueue) {
             block(errors)
         }
     }
