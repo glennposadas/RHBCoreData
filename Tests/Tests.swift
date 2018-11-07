@@ -9,7 +9,7 @@ final class RHBCoreDataTests: XCTestCase {
         container = NSPersistentContainer(name: "test", managedObjectModel: RHBCoreDataTests.model)
         XCTAssert(container.persistentStoreDescriptions.count == 1)
         container.persistentStoreDescriptions.forEach { store in
-            try! container.persistentStoreCoordinator.destroyPersistentStore(at: store.url!, ofType: store.type, options: nil)
+            try! container.persistentStoreCoordinator.destroyPersistentStore(at: store.url!, ofType: store.type)
         }
     }
 
@@ -29,7 +29,7 @@ final class RHBCoreDataTests: XCTestCase {
     }
 
     func testCoreDataAsyncOk() {
-        let ex = self.expectation(description: "async")
+        let ex = self.expectation(description: "asyncok")
         container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/tmp/xxx1.sqlite")))
         container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/tmp/xxx2.sqlite")))
         XCTAssert(container.persistentStoreDescriptions.count == 3)
@@ -41,7 +41,7 @@ final class RHBCoreDataTests: XCTestCase {
     }
 
     func testCoreDataAsyncErrors() {
-        let ex = self.expectation(description: "async")
+        let ex = self.expectation(description: "asyncbad")
         container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx1.sqlite")))
         container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx2.sqlite")))
         XCTAssert(container.persistentStoreDescriptions.count == 3)
