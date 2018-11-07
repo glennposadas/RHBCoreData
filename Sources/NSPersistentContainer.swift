@@ -1,7 +1,32 @@
 import CoreData
 
 public extension NSPersistentContainer {
-    func loadPersistentStoresAsync(completionQueue: DispatchQueue = .main, _ block: @escaping ([(NSPersistentStoreDescription, Error)]) -> Void) {
+    convenience init(sqliteFileUrl: URL, model: NSManagedObjectModel) {
+        let name = sqliteFileUrl.deletingPathExtension().lastPathComponent
+        self.init(name: name, managedObjectModel: model)
+        self.persistentStoreDescriptions.first?.url = sqliteFileUrl
+    }
+    
+    func destroyStores() throws {
+        try persistentStoreDescriptions.forEach { storeDescription in
+            try persistentStoreCoordinator.destroyStore(description: storeDescription)
+        }
+    }
+
+    func loadStoresSync() -> [(NSPersistentStoreDescription, Error)] {
+        persistentStoreDescriptions.forEach {
+            $0.shouldAddStoreAsynchronously = false
+        }
+        var errors: [(NSPersistentStoreDescription, Error)] = []
+        loadPersistentStores { storeDescription, error in
+            if let error = error {
+                errors.append((storeDescription, error))
+            }
+        }
+        return errors
+    }
+
+    func loadStoresAsync(completionQueue: DispatchQueue = .main, _ block: @escaping ([(NSPersistentStoreDescription, Error)]) -> Void) {
         let group = DispatchGroup()
         persistentStoreDescriptions.forEach {
             $0.shouldAddStoreAsynchronously = true

@@ -3,14 +3,14 @@ import RHBCoreData
 
 final class RHBCoreDataTests: XCTestCase {
     static let model = NSManagedObjectModel(name: "Model", in: Bundle(for: RHBCoreDataTests.self))!
+    static let storeUrl: URL = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("test").appendingPathExtension("sqlite")
+
     var container: NSPersistentContainer!
 
     override func setUp() {
-        container = NSPersistentContainer(name: "test", managedObjectModel: RHBCoreDataTests.model)
+        container = NSPersistentContainer(sqliteFileUrl: RHBCoreDataTests.storeUrl, model: RHBCoreDataTests.model)
         XCTAssert(container.persistentStoreDescriptions.count == 1)
-        container.persistentStoreDescriptions.forEach { store in
-            try! container.persistentStoreCoordinator.destroyPersistentStore(at: store.url!, ofType: store.type)
-        }
+        try! container.destroyStores()
     }
 
     func testBasicCoreData() {
@@ -28,12 +28,23 @@ final class RHBCoreDataTests: XCTestCase {
         XCTAssert(try! container.viewContext.fetch(fetchRequest).isEmpty)
     }
 
+
+    func testCoreDataSyncOk() {
+        XCTAssert(container.loadStoresSync().isEmpty)
+    }
+
+    func testCoreDataSyncErrors() {
+        container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx1.sqlite")))
+        container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx2.sqlite")))
+        XCTAssert(container.loadStoresSync().count == 2)
+    }
+
     func testCoreDataAsyncOk() {
         let ex = self.expectation(description: "asyncok")
         container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/tmp/xxx1.sqlite")))
         container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/tmp/xxx2.sqlite")))
         XCTAssert(container.persistentStoreDescriptions.count == 3)
-        container.loadPersistentStoresAsync { errors in
+        container.loadStoresAsync { errors in
             XCTAssert(errors.isEmpty)
             ex.fulfill()
         }
@@ -45,7 +56,7 @@ final class RHBCoreDataTests: XCTestCase {
         container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx1.sqlite")))
         container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx2.sqlite")))
         XCTAssert(container.persistentStoreDescriptions.count == 3)
-        container.loadPersistentStoresAsync { errors in
+        container.loadStoresAsync { errors in
             XCTAssert(errors.count == 2)
             ex.fulfill()
         }
