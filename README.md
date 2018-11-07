@@ -1,0 +1,2 @@
+# RHBCoreData
+Simplify CoreData Stack
