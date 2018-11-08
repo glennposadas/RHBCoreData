@@ -1,10 +1,10 @@
 import CoreData
 
 public extension NSPersistentContainer {
-    convenience init(sqliteFileUrl: URL, model: NSManagedObjectModel) {
-        let name = sqliteFileUrl.deletingPathExtension().lastPathComponent
+    convenience init(fileUrl: URL, model: NSManagedObjectModel) {
+        let name = fileUrl.deletingPathExtension().lastPathComponent
         self.init(name: name, managedObjectModel: model)
-        self.persistentStoreDescriptions.first?.url = sqliteFileUrl
+        self.persistentStoreDescriptions.first?.url = fileUrl
     }
     
     func destroyStores() throws {

@@ -8,7 +8,7 @@ final class RHBCoreDataTests: XCTestCase {
     var container: NSPersistentContainer!
 
     override func setUp() {
-        container = NSPersistentContainer(sqliteFileUrl: RHBCoreDataTests.storeUrl, model: RHBCoreDataTests.model)
+        container = NSPersistentContainer(fileUrl: RHBCoreDataTests.storeUrl, model: RHBCoreDataTests.model)
         XCTAssert(container.persistentStoreDescriptions.count == 1)
         try! container.destroyStores()
     }
@@ -61,5 +61,18 @@ final class RHBCoreDataTests: XCTestCase {
             ex.fulfill()
         }
         self.waitForExpectations(timeout: 2, handler: nil)
+    }
+
+    func testFetchedResultsController() {
+        XCTAssert(container.loadStoresSync().isEmpty)
+        let fr = makeFetchRequest(TestEntity.self)
+        fr.sortDescriptors = [
+            NSSortDescriptor(key: #keyPath(TestEntity.number), ascending: true)
+        ]
+        let frc = try! NSFetchedResultsController(performing: fr, in: container.viewContext)
+        let fd = FetchedData(frc)
+        XCTAssert(fd.sections.count == 1)
+        XCTAssert(fd.sections.first?.numberOfObjects == 0)
+        _ = TestEntity(context: container.viewContext)
     }
 }
