@@ -3,15 +3,13 @@
 
 import PackageDescription
 
-let x = "RHBCoreData"
-
 let package = Package(
-    name: x,
+    name: "RHBCoreData",
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
-            name: x,
-            targets: [x]),
+            name: "RHBCoreData",
+            targets: ["RHBCoreData"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -21,12 +19,12 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
-            name: x,
+            name: "RHBCoreData",
             dependencies: [],
             path: "Sources"),
         .testTarget(
-            name: "\(x)Tests",
-            dependencies: [Target.Dependency(stringLiteral: x)],
+            name: "RHBCoreDataTests",
+            dependencies: ["RHBCoreData"],
             path: "Tests"),
     ]
 )
