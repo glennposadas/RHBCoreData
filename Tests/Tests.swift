@@ -78,7 +78,7 @@ final class RHBCoreDataTests: XCTestCase {
         ]
 
         let controller = try! NSFetchedResultsController(performing: fr, in: container.viewContext, section: #keyPath(TestSection.section))
-        let fd = FetchedData(controller)
+        let fd = FetchedResults(controller)
         fd.actions.sectionIndexTitle = { name in
             return "title\(name)"
         }
@@ -118,7 +118,7 @@ final class RHBCoreDataTests: XCTestCase {
         fetchedRequest.sortDescriptors = [
             NSSortDescriptor(key: #keyPath(TestEntity.number), ascending: true)
         ]
-        let fetchedData = FetchedData(try! NSFetchedResultsController(performing: fetchedRequest, in: container.viewContext))
+        let fetchedData = FetchedResults(try! NSFetchedResultsController(performing: fetchedRequest, in: container.viewContext))
 
         var willed = 0
         var dided = 0

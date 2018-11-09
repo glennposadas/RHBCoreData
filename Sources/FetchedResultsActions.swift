@@ -1,6 +1,6 @@
 import CoreData
 
-public class FetchedDataActions<T: NSFetchRequestResult> {
+public class FetchedResultsActions<T: NSFetchRequestResult> {
     public var objectChangeActions: [NSFetchedResultsChangeType: (T, IndexPath, IndexPath) -> Void] = [:]
     public var sectionChangeActions: [NSFetchedResultsChangeType: (NSFetchedResultsSectionInfo, Int) -> Void] = [:]
     public var willChange: (() -> Void)?
@@ -11,9 +11,9 @@ public class FetchedDataActions<T: NSFetchRequestResult> {
 }
 
 class FetchedResultsControllerDelegateActions<T: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate {
-    weak var actions: FetchedDataActions<T>?
+    weak var actions: FetchedResultsActions<T>?
 
-    init(_ actions: FetchedDataActions<T>) {
+    init(_ actions: FetchedResultsActions<T>) {
         self.actions = actions
     }
 

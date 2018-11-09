@@ -1,9 +1,9 @@
 import CoreData
 
 //NSFetchedResultsController suck because its objective-c generic, so we wrap it
-public class FetchedData<T: NSFetchRequestResult> {
+public class FetchedResults<T: NSFetchRequestResult> {
     public let controller: NSFetchedResultsController<T>
-    public let actions = FetchedDataActions<T>()
+    public let actions = FetchedResultsActions<T>()
 
     public init(_ controller: NSFetchedResultsController<T>) {
         controller.delegate = actions.lazyDelegate
@@ -15,7 +15,7 @@ public class FetchedData<T: NSFetchRequestResult> {
     }
 }
 
-public extension FetchedData {
+public extension FetchedResults {
     var sections: [NSFetchedResultsSectionInfo] {
         return controller.sections ?? []
     }
