@@ -67,7 +67,7 @@ final class RHBCoreDataTests: XCTestCase {
         }
         self.waitForExpectations(timeout: 2, handler: nil)
     }
-
+/*
     func testSections() {
         XCTAssert(container.loadStoresSync().isEmpty)
         container.viewContext.automaticallyMergesChangesFromParent = true
@@ -213,4 +213,5 @@ final class RHBCoreDataTests: XCTestCase {
             XCTAssert(fetchedData.sections.first?.numberOfObjects == 0)
         }
     }
+ */
 }
