@@ -6,6 +6,13 @@ public extension NSPersistentContainer {
         self.init(name: name, managedObjectModel: model)
         persistentStoreDescriptions.first?.url = fileUrl
     }
+
+    func performTaskAndWait(_ block: @escaping (NSManagedObjectContext) -> Void) {
+        let context = newBackgroundContext()
+        context.performAndWait {
+            block(context)
+        }
+    }
     
     func destroyStores() throws {
         try persistentStoreDescriptions.forEach { storeDescription in
