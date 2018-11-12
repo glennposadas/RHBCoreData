@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
     s.name             = 'RHBCoreData'
     s.version          = '1.0.0'
-    s.summary          = 'More control when adding block to operation queue.'
+    s.summary          = 'CoreData extensions and stuff.'
 
     s.description      = <<-DESC
-    OperationsKit provides more control when adding block to OperationQueue. Also adds BlockOperation initializer.
+    RHBCoreData provides CoreData extensions and stuff.
                        DESC
 
     s.homepage         = "https://github.com/sisoje/#{s.name}"
