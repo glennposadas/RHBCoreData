@@ -2,8 +2,7 @@ import CoreData
 
 public extension NSPersistentContainer {
     convenience init(fileUrl: URL, model: NSManagedObjectModel) {
-        let name = fileUrl.deletingPathExtension().lastPathComponent
-        self.init(name: name, managedObjectModel: model)
+        self.init(name: fileUrl.deletingPathExtension().lastPathComponent, managedObjectModel: model)
         persistentStoreDescriptions.first?.url = fileUrl
     }
 
