@@ -7,20 +7,20 @@ public extension NSPersistentContainer {
         persistentStoreDescriptions.first?.url = fileUrl
     }
 
-    func performTaskAndWait(_ block: @escaping (NSManagedObjectContext) -> Void) {
+    func performForegroundTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
         let context = newBackgroundContext()
         context.performAndWait {
             block(context)
         }
     }
     
-    func destroyStores() throws {
+    func destroyStoreDescriptions() throws {
         try persistentStoreDescriptions.forEach { storeDescription in
             try persistentStoreCoordinator.destroyStore(description: storeDescription)
         }
     }
 
-    func loadStoresSync() -> [(NSPersistentStoreDescription, Error)] {
+    func loadPersistentStoresSync() -> [(NSPersistentStoreDescription, Error)] {
         persistentStoreDescriptions.forEach {
             $0.shouldAddStoreAsynchronously = false
         }
@@ -33,7 +33,7 @@ public extension NSPersistentContainer {
         return errors
     }
 
-    func loadStoresAsync(completionQueue: DispatchQueue = .main, _ block: @escaping ([(NSPersistentStoreDescription, Error)]) -> Void) {
+    func loadPersistentStoresAsync(completionQueue: DispatchQueue = .main, _ block: @escaping ([(NSPersistentStoreDescription, Error)]) -> Void) {
         let group = DispatchGroup()
         persistentStoreDescriptions.forEach {
             $0.shouldAddStoreAsynchronously = true
