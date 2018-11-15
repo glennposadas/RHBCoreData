@@ -1,2 +1,2 @@
 # RHBCoreData
-Simplify CoreData Stack
+Simplify and Swiftify CoreData Stack
