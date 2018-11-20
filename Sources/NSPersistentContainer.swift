@@ -1,9 +1,9 @@
 import CoreData
 
 public extension NSPersistentContainer {
-    convenience init(fileUrl: URL, model: NSManagedObjectModel) {
-        self.init(name: fileUrl.deletingPathExtension().lastPathComponent, managedObjectModel: model)
-        persistentStoreDescriptions.first?.url = fileUrl
+    convenience init(storeUrl: URL, model: NSManagedObjectModel) {
+        self.init(name: storeUrl.deletingPathExtension().lastPathComponent, managedObjectModel: model)
+        persistentStoreDescriptions.first?.url = storeUrl
     }
 
     func performBackgroundTaskAndWait(_ block: @escaping (NSManagedObjectContext) -> Void) {
@@ -13,10 +13,8 @@ public extension NSPersistentContainer {
         }
     }
     
-    func destroyStoreDescriptions() throws {
-        try persistentStoreDescriptions.forEach { storeDescription in
-            try persistentStoreCoordinator.destroyStore(description: storeDescription)
-        }
+    func destroyPersistentStores() throws {
+        try persistentStoreDescriptions.forEach { try persistentStoreCoordinator.destroyPersistentStore(description: $0) }
     }
 
     func loadPersistentStoresSync() -> [(NSPersistentStoreDescription, Error)] {

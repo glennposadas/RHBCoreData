@@ -1,7 +1,7 @@
 import CoreData
 
 public extension NSManagedObject {
-    func delete() {
+    func deleteFromManagedObjectContext() {
         managedObjectContext?.delete(self)
     }
 }
