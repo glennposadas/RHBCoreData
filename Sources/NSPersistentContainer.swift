@@ -6,7 +6,7 @@ public extension NSPersistentContainer {
         persistentStoreDescriptions.first?.url = fileUrl
     }
 
-    func performForegroundTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
+    func performBackgroundTaskAndWait(_ block: @escaping (NSManagedObjectContext) -> Void) {
         let context = newBackgroundContext()
         context.performAndWait {
             block(context)
