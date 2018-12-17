@@ -6,4 +6,9 @@ public extension NSManagedObjectContext {
             block(self)
         }
     }
+    func performTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
+        perform { [unowned self] in
+            block(self)
+        }
+    }
 }
