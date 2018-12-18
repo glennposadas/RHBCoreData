@@ -11,4 +11,15 @@ public extension NSManagedObjectContext {
             block(self)
         }
     }
+    func save(_ block: (Error)->Void) {
+        guard hasChanges else {
+            return
+        }
+        do {
+            try save()
+        } catch {
+            block(error)
+        }
+    }
 }
+
