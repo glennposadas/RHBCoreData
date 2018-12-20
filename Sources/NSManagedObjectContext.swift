@@ -27,7 +27,7 @@ public extension NSManagedObjectContext {
     }
 }
 
-extension Array where Element: NSManagedObject {
+public extension Array where Element: NSManagedObject {
     func reloadedObjects(in context: NSManagedObjectContext) -> [Element] {
         return compactMap { context.reloadObject(other: $0) }
     }
