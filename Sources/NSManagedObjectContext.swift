@@ -21,5 +21,9 @@ public extension NSManagedObjectContext {
             block(error)
         }
     }
+    func reloadObject<T: NSManagedObject>(other: T) -> T? {
+        let baseObject = try? existingObject(with: other.objectID)
+        return baseObject as? T
+    }
 }
 
