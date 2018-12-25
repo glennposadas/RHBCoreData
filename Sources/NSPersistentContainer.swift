@@ -44,14 +44,4 @@ public extension NSPersistentContainer {
             block(errors)
         }
     }
-
-    func setupBackgroundFetchedResultsController<T: NSManagedObject>(_ request: NSFetchRequest<T>, _ block: @escaping (NSFetchedResultsController<T>) -> Void) {
-        performBackgroundTask { context in
-            guard let cont = try? NSFetchedResultsController(performing: request, in: context) else {
-                return
-            }
-            context.automaticallyMergesChangesFromParent = true
-            block(cont)
-        }
-    }
 }
