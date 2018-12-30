@@ -11,6 +11,13 @@ public extension NSManagedObjectContext {
             block(self)
         }
     }
+    func result<T>(_ block: @escaping (NSManagedObjectContext) -> T) -> T {
+        var t: T!
+        performAndWait {
+            t = block(self)
+        }
+        return t
+    }
     func save(_ block: (Error)->Void) {
         guard hasChanges else {
             return
