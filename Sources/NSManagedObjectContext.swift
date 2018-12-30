@@ -11,7 +11,7 @@ public extension NSManagedObjectContext {
             block(self)
         }
     }
-    func result<T>(_ block: @escaping (NSManagedObjectContext) -> T) -> T {
+    func performResult<T>(_ block: @escaping (NSManagedObjectContext) -> T) -> T {
         var t: T!
         performAndWait {
             t = block(self)
