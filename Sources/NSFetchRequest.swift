@@ -6,6 +6,7 @@ public func genericFetchRequest<T: NSManagedObject>(_ t: T.Type) -> NSFetchReque
 
 public class FetchRequestBuilder<T: NSManagedObject> {
     public let request = genericFetchRequest(T.self)
+    public init() {}
 }
 
 public extension FetchRequestBuilder {
