@@ -3,9 +3,9 @@ import CoreData
 public class CoreDataStack {
     public let persistentContainer: NSPersistentContainer
 
-    public lazy var backgroundWritingContext = persistentContainer.newBackgroundContext()
+    public lazy var writingContext = persistentContainer.newBackgroundContext()
 
-    public lazy var backgroundReadingContext: NSManagedObjectContext = {
+    public lazy var readingContext: NSManagedObjectContext = {
         let context = persistentContainer.newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         return context
@@ -18,14 +18,5 @@ public class CoreDataStack {
 
     public init(_ persistentContainer: NSPersistentContainer) {
         self.persistentContainer = persistentContainer
-    }
-}
-
-public extension CoreDataStack {
-    func backgroundWriteTask(_ block: @escaping (NSManagedObjectContext)->Void) {
-        backgroundWritingContext.performTask { context in
-            block(context)
-            context.saveChanges()
-        }
     }
 }
