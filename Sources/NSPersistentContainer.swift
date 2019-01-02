@@ -6,10 +6,6 @@ public extension NSPersistentContainer {
         persistentStoreDescriptions.first?.url = storeUrl
     }
 
-    func performNewBackgroundTaskAndWait(_ block: @escaping (NSManagedObjectContext) -> Void) {
-        newBackgroundContext().performTaskAndWait(block)
-    }
-    
     func destroyPersistentStores() throws {
         try persistentStoreDescriptions.forEach { try persistentStoreCoordinator.destroyPersistentStore(description: $0) }
     }

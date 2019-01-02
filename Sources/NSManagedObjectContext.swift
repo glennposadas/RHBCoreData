@@ -1,17 +1,17 @@
 import CoreData
 
 public extension NSManagedObjectContext {
-    func fetchMore<T: NSManagedObject>(_ request: NSFetchRequest<T>, _ block: ((Error) -> Void)? = nil) -> [T]? {
+    func fetchArray<T: NSManagedObject>(_ request: NSFetchRequest<T>, _ block: ((Error) -> Void)? = nil) -> [T]? {
         do {
             return try fetch(request)
         } catch {
             block?(error)
+            return nil
         }
-        return nil
     }
 
-    func fetchOne<T: NSManagedObject>(_ request: NSFetchRequest<T>, _ block: ((Error) -> Void)? = nil) -> T? {
-        return fetchMore(request, block)?.first
+    func fetchObject<T: NSManagedObject>(_ request: NSFetchRequest<T>, _ block: ((Error) -> Void)? = nil) -> T? {
+        return fetchArray(request, block)?.first
     }
 
     func performTaskAndWait(_ block: @escaping (NSManagedObjectContext) -> Void) {
@@ -35,7 +35,7 @@ public extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveChanges(_ block: ((Error)->Void)? = nil) -> Bool {
+    func saveChanges(_ block: ((Error) -> Void)? = nil) -> Bool {
         guard hasChanges else {
             return true
         }
@@ -48,15 +48,17 @@ public extension NSManagedObjectContext {
         }
     }
 
-    func reloadObject<T: NSManagedObject>(other: T) -> T? {
-        let baseObject = try? existingObject(with: other.objectID)
-        return baseObject as? T
+    func reloadObject<T: NSManagedObject>(other: T, _ block: ((Error) -> Void)? = nil) -> T? {
+        var object: T?
+        do {
+            object = try existingObject(with: other.objectID) as? T
+        } catch {
+            block?(error)
+        }
+        return object
+    }
+
+    func reloadArray<T: NSManagedObject>(array: [T], _ block: ((Error) -> Void)? = nil) -> [T] {
+        return array.compactMap { reloadObject(other: $0, block) }
     }
 }
-
-public extension Array where Element: NSManagedObject {
-    func reloadedObjects(in context: NSManagedObjectContext) -> [Element] {
-        return compactMap { context.reloadObject(other: $0) }
-    }
-}
-
