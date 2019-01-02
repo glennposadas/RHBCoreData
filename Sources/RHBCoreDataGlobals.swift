@@ -4,5 +4,7 @@ public func genericFetchRequest<T: NSManagedObject>(_ t: T.Type) -> NSFetchReque
     return T.fetchRequest() as! NSFetchRequest<T>
 }
 
-public var coreDataErrorBlock: (Error) -> Void = { assertionFailure(String(describing: $0)) }
+public enum FailureHandler {
+    public static var shared: (Error) -> Void = { assertionFailure(String(describing: $0)) }
+}
 

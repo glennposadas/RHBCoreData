@@ -1,7 +1,7 @@
 import CoreData
 
 public extension NSManagedObjectContext {
-    func fetchArray<T: NSFetchRequestResult>(_ request: NSFetchRequest<T>, _ failure: (Error) -> Void = coreDataErrorBlock) -> [T]? {
+    func fetchArray<T: NSFetchRequestResult>(_ request: NSFetchRequest<T>, _ failure: (Error) -> Void = FailureHandler.shared) -> [T]? {
         do {
             return try fetch(request)
         } catch {
@@ -10,7 +10,7 @@ public extension NSManagedObjectContext {
         }
     }
 
-    func fetchObject<T: NSFetchRequestResult>(_ request: NSFetchRequest<T>, _ failure: (Error) -> Void = coreDataErrorBlock) -> T? {
+    func fetchObject<T: NSFetchRequestResult>(_ request: NSFetchRequest<T>, _ failure: (Error) -> Void = FailureHandler.shared) -> T? {
         return fetchArray(request, failure)?.first
     }
 
@@ -35,7 +35,7 @@ public extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func save(failure: (Error) -> Void = coreDataErrorBlock) -> Bool {
+    func save(failure: (Error) -> Void = FailureHandler.shared) -> Bool {
         do {
             try save()
             return true
@@ -46,14 +46,14 @@ public extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveChanges(failure: (Error) -> Void = coreDataErrorBlock) -> Bool {
+    func saveChanges(failure: (Error) -> Void = FailureHandler.shared) -> Bool {
         guard hasChanges else {
             return true
         }
         return saveChanges(failure: failure)
     }
 
-    func reloadObject<T: NSManagedObject>(other: T, _ failure: (Error) -> Void = coreDataErrorBlock) -> T? {
+    func reloadObject<T: NSManagedObject>(other: T, _ failure: (Error) -> Void = FailureHandler.shared) -> T? {
         var object: T?
         do {
             object = try existingObject(with: other.objectID) as? T
@@ -63,7 +63,7 @@ public extension NSManagedObjectContext {
         return object
     }
 
-    func reloadArray<T: NSManagedObject>(array: [T], _ failure: (Error) -> Void = coreDataErrorBlock) -> [T] {
+    func reloadArray<T: NSManagedObject>(array: [T], _ failure: (Error) -> Void = FailureHandler.shared) -> [T] {
         return array.compactMap { reloadObject(other: $0, failure) }
     }
 
