@@ -1,9 +1,12 @@
 import CoreData
 
 public class FetchedActions<T: NSFetchRequestResult> {
-    public let blocks = FetchedBlocks<T>()
     weak var controller: NSFetchedResultsController<T>?
-    lazy var delegate: NSFetchedResultsControllerDelegate = FetchedResultsControllerDelegateWithBlocks<T>(blocks)
+    let delegate = FetchedResultsControllerDelegateWithBlocks<T>()
+
+    public var blocks: FetchedBlocks<T> {
+        return delegate.blocks
+    }
 
     public init(_ controller: NSFetchedResultsController<T>) {
         self.controller = controller
@@ -15,7 +18,7 @@ public class FetchedActions<T: NSFetchRequestResult> {
     }
 }
 
-public class FetchedBlocks<T> {
+public class FetchedBlocks<T: NSFetchRequestResult> {
     public var didChangeObject: [NSFetchedResultsChangeType: (T, IndexPath, IndexPath) -> Void] = [:]
     public var didChangeSection: [NSFetchedResultsChangeType: (NSFetchedResultsSectionInfo, Int) -> Void] = [:]
     public var willChange: (() -> Void)?
@@ -23,12 +26,8 @@ public class FetchedBlocks<T> {
     public var sectionIndexTitle: ((String) -> String?)?
 }
 
-class FetchedResultsControllerDelegateWithBlocks<T>: NSObject, NSFetchedResultsControllerDelegate {
-    let blocks: FetchedBlocks<T>
-
-    init(_ actions: FetchedBlocks<T>) {
-        self.blocks = actions
-    }
+class FetchedResultsControllerDelegateWithBlocks<T: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate {
+    let blocks = FetchedBlocks<T>()
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         blocks.didChange?()
