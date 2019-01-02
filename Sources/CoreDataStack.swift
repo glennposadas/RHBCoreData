@@ -11,13 +11,21 @@ public class CoreDataStack {
         return context
     }()
 
+    public lazy var mainContext: NSManagedObjectContext = {
+        persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
+        return persistentContainer.viewContext
+    }()
+
     public init(_ persistentContainer: NSPersistentContainer) {
         self.persistentContainer = persistentContainer
     }
 }
 
 public extension CoreDataStack {
-    var mainContext: NSManagedObjectContext {
-        return persistentContainer.viewContext
+    func backgroundWriteTask(_ block: @escaping (NSManagedObjectContext)->Void) {
+        backgroundWritingContext.performTask { context in
+            block(context)
+            context.saveChanges()
+        }
     }
 }
