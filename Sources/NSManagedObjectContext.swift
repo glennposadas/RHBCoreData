@@ -1,17 +1,17 @@
 import CoreData
 
 public extension NSManagedObjectContext {
-    func fetchArray<T: NSManagedObject>(_ request: NSFetchRequest<T>, _ block: ((Error) -> Void)? = nil) -> [T]? {
+    func fetchArray<T: NSFetchRequestResult>(_ request: NSFetchRequest<T>, _ failure: (Error) -> Void = coreDataErrorBlock) -> [T]? {
         do {
             return try fetch(request)
         } catch {
-            block?(error)
+            failure(error)
             return nil
         }
     }
 
-    func fetchObject<T: NSManagedObject>(_ request: NSFetchRequest<T>, _ block: ((Error) -> Void)? = nil) -> T? {
-        return fetchArray(request, block)?.first
+    func fetchObject<T: NSFetchRequestResult>(_ request: NSFetchRequest<T>, _ failure: (Error) -> Void = coreDataErrorBlock) -> T? {
+        return fetchArray(request, failure)?.first
     }
 
     func performTaskAndWait(_ block: @escaping (NSManagedObjectContext) -> Void) {
@@ -35,30 +35,39 @@ public extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveChanges(_ block: ((Error) -> Void)? = nil) -> Bool {
-        guard hasChanges else {
-            return true
-        }
+    func save(failure: (Error) -> Void = coreDataErrorBlock) -> Bool {
         do {
             try save()
             return true
         } catch {
-            block?(error)
+            failure(error)
             return false
         }
     }
 
-    func reloadObject<T: NSManagedObject>(other: T, _ block: ((Error) -> Void)? = nil) -> T? {
+    @discardableResult
+    func saveChanges(failure: (Error) -> Void = coreDataErrorBlock) -> Bool {
+        guard hasChanges else {
+            return true
+        }
+        return saveChanges(failure: failure)
+    }
+
+    func reloadObject<T: NSManagedObject>(other: T, _ failure: (Error) -> Void = coreDataErrorBlock) -> T? {
         var object: T?
         do {
             object = try existingObject(with: other.objectID) as? T
         } catch {
-            block?(error)
+            failure(error)
         }
         return object
     }
 
-    func reloadArray<T: NSManagedObject>(array: [T], _ block: ((Error) -> Void)? = nil) -> [T] {
-        return array.compactMap { reloadObject(other: $0, block) }
+    func reloadArray<T: NSManagedObject>(array: [T], _ failure: (Error) -> Void = coreDataErrorBlock) -> [T] {
+        return array.compactMap { reloadObject(other: $0, failure) }
+    }
+
+    func fetchedResultsController<T: NSFetchRequestResult>(request: NSFetchRequest<T>, sectionNameKeyPath: String? = nil, cacheName: String? = nil) -> NSFetchedResultsController<T> {
+        return NSFetchedResultsController(fetchRequest: request, managedObjectContext: self, sectionNameKeyPath: sectionNameKeyPath, cacheName: cacheName)
     }
 }
