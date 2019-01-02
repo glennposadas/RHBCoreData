@@ -53,7 +53,7 @@ public extension NSManagedObjectContext {
         return save(failure: failure)
     }
 
-    func reloadObject<T: NSManagedObject>(other: T, _ failure: (Error) -> Void = CoreDataErrorHandler.shared) -> T? {
+    func reloadObject<T: NSManagedObject>(_ other: T, _ failure: (Error) -> Void = CoreDataErrorHandler.shared) -> T? {
         var object: T?
         do {
             object = try existingObject(with: other.objectID) as? T
@@ -63,8 +63,8 @@ public extension NSManagedObjectContext {
         return object
     }
 
-    func reloadArray<T: NSManagedObject>(array: [T], _ failure: (Error) -> Void = CoreDataErrorHandler.shared) -> [T] {
-        return array.compactMap { reloadObject(other: $0, failure) }
+    func reloadArray<T: NSManagedObject>(_ array: [T], _ failure: (Error) -> Void = CoreDataErrorHandler.shared) -> [T] {
+        return array.compactMap { reloadObject($0, failure) }
     }
 
     func fetchedResultsController<T: NSFetchRequestResult>(request: NSFetchRequest<T>, sectionNameKeyPath: String? = nil, cacheName: String? = nil) -> NSFetchedResultsController<T> {
