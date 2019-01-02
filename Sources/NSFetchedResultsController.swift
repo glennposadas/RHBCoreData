@@ -1,7 +1,7 @@
 import CoreData
 
 @objc public extension NSFetchedResultsController {
-    func performFetch(failure: (Error) -> Void = FailureHandler.shared) -> Bool {
+    func performFetch(failure: (Error) -> Void = CoreDataErrorHandler.shared) -> Bool {
         do {
             try performFetch()
             return true
