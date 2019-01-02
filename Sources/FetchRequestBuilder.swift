@@ -1,9 +1,5 @@
 import CoreData
 
-public func genericFetchRequest<T: NSManagedObject>(_ t: T.Type) -> NSFetchRequest<T> {
-    return T.fetchRequest() as! NSFetchRequest<T>
-}
-
 public class FetchRequestBuilder<T: NSManagedObject> {
     public let request = genericFetchRequest(T.self)
     public init() {}
