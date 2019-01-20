@@ -20,3 +20,18 @@ public class CoreDataStack {
         self.persistentContainer = persistentContainer
     }
 }
+
+public extension CoreDataStack {
+    func write(task: @escaping (NSManagedObjectContext)->Void, completion: ((Error?)->Void)? = nil) {
+        writingContext.performTask { context in
+            task(context)
+            do {
+                try context.saveChanges()
+            } catch {
+                completion?(error)
+                return
+            }
+            completion?(nil)
+        }
+    }
+}

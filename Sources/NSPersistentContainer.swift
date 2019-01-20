@@ -10,14 +10,33 @@ public extension NSPersistentContainer {
         try persistentStoreDescriptions.forEach { try persistentStoreCoordinator.destroyPersistentStore(description: $0) }
     }
 
+    @discardableResult
+    func loadIfNotRecreate() throws -> Bool {
+        try createPersistentStoreDirectories()
+        if loadPersistentStoresSync().isEmpty {
+            return true
+        }
+        try destroyPersistentStores()
+        if let error = loadPersistentStoresSync().first?.1 {
+            throw error
+        }
+        return false
+    }
+
+    func createPersistentStoreDirectories() throws {
+        try persistentStoreDescriptions
+            .compactMap { $0.url?.deletingLastPathComponent() }
+            .forEach { try FileManager().createDirectory(at: $0, withIntermediateDirectories: true) }
+    }
+
     func loadPersistentStoresSync() -> [(NSPersistentStoreDescription, Error)] {
         persistentStoreDescriptions.forEach {
             $0.shouldAddStoreAsynchronously = false
         }
         var errors: [(NSPersistentStoreDescription, Error)] = []
         loadPersistentStores { storeDescription, error in
-            if let error = error {
-                errors.append((storeDescription, error))
+            error.map {
+                errors.append((storeDescription, $0))
             }
         }
         return errors
@@ -31,8 +50,8 @@ public extension NSPersistentContainer {
         }
         var errors: [(NSPersistentStoreDescription, Error)] = []
         loadPersistentStores { storeDescription, error in
-            if let error = error {
-                errors.append((storeDescription, error))
+            error.map {
+                errors.append((storeDescription, $0))
             }
             group.leave()
         }
