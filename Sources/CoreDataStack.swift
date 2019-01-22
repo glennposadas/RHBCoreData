@@ -22,6 +22,10 @@ public class CoreDataStack {
 }
 
 public extension CoreDataStack {
+    convenience init(storeUrl: URL, model: NSManagedObjectModel) {
+        self.init(NSPersistentContainer(storeUrl: storeUrl, model: model))
+    }
+
     func write(task: @escaping (NSManagedObjectContext)->Void, completion: ((Error?)->Void)? = nil) {
         writingContext.performTask { context in
             task(context)
