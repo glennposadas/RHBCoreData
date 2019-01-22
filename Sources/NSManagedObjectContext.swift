@@ -37,7 +37,9 @@ public extension NSManagedObjectContext {
         return NSFetchedResultsController(fetchRequest: request, managedObjectContext: self, sectionNameKeyPath: sectionNameKeyPath, cacheName: cacheName)
     }
 
-    func createObject<T: NSManagedObject>() -> T {
-        return T(context: self)
+    func createObject<T: NSManagedObject>(_ initObject: (T) -> Void = { _ in }) -> T {
+        let t = T(context: self)
+        initObject(t)
+        return t
     }
 }
