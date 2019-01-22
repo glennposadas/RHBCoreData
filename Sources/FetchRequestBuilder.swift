@@ -27,4 +27,9 @@ public extension FetchRequestBuilder {
         request.sortDescriptors = descriptors
         return self
     }
+
+    func request(_ block: (NSFetchRequest<T>)->Void) -> NSFetchRequest<T> {
+        block(request)
+        return request
+    }
 }
