@@ -22,19 +22,19 @@ public extension FetchRequestBuilder {
         return modify { $0.includesSubentities = value }
     }
 
-    func asFaults(_ value: Bool) -> Self {
+    func returnsObjectsAsFaults(_ value: Bool) -> Self {
         return modify { $0.returnsObjectsAsFaults = value }
     }
 
-    func limit(_ value: Int) -> Self {
+    func fetchLimit(_ value: Int) -> Self {
         return modify { $0.fetchLimit = value }
     }
 
-    func batchSize(_ value: Int) -> Self {
+    func fetchBatchSize(_ value: Int) -> Self {
         return modify { $0.fetchBatchSize = value }
     }
 
-    func offset(_ value: Int) -> Self {
+    func fetchOffset(_ value: Int) -> Self {
         return modify { $0.fetchOffset = value }
     }
 
