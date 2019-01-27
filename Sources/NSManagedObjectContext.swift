@@ -6,17 +6,11 @@ public extension NSManagedObjectContext {
             block(self)
         }
     }
-
+    
     func performTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
         perform { [unowned self] in
             block(self)
         }
-    }
-
-    func performTaskAndWaitResult<T>(_ block: @escaping (NSManagedObjectContext) -> T) -> T {
-        var t: T!
-        performTaskAndWait { t = block($0) }
-        return t
     }
 
     func saveChanges() throws {
@@ -27,9 +21,9 @@ public extension NSManagedObjectContext {
     }
 
     func refetch<S: Sequence>(_ sequence: S) throws -> [S.Element] where S.Element: NSManagedObject {
-        let request = FetchRequestBuilder<S.Element>()
-            .andPredicate(NSPredicate(format: "self IN %@", argumentArray: [sequence]))
-            .request
+        let request = FetchRequestBuilder<S.Element>().request {
+            $0.predicate = NSPredicate(format: "self IN %@", argumentArray: [sequence])
+        }
         return try fetch(request)
     }
 

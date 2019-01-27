@@ -9,46 +9,9 @@ public class FetchRequestBuilder<T: NSManagedObject> {
 }
 
 public extension FetchRequestBuilder {
-    func modify(_ block: (NSFetchRequest<T>)->Void) -> Self {
-        block(request)
-        return self
-    }
-
-    func includesPropertyValues(_ value: Bool) -> Self {
-        return modify { $0.includesPropertyValues = value }
-    }
-
-    func includesSubentities(_ value: Bool) -> Self {
-        return modify { $0.includesSubentities = value }
-    }
-
-    func returnsObjectsAsFaults(_ value: Bool) -> Self {
-        return modify { $0.returnsObjectsAsFaults = value }
-    }
-
-    func fetchLimit(_ value: Int) -> Self {
-        return modify { $0.fetchLimit = value }
-    }
-
-    func fetchBatchSize(_ value: Int) -> Self {
-        return modify { $0.fetchBatchSize = value }
-    }
-
-    func fetchOffset(_ value: Int) -> Self {
-        return modify { $0.fetchOffset = value }
-    }
-
-    func andPredicate(_ predicate: NSPredicate) -> Self {
-        return modify {
-            $0.predicate = $0.predicate.map { NSCompoundPredicate(andPredicateWithSubpredicates: [$0, predicate]) } ?? predicate
-        }
-    }
-
-    func addSort(_ descriptor: NSSortDescriptor) -> Self {
-        return modify { $0.sortDescriptors = ($0.sortDescriptors ?? []) + [descriptor] }
-    }
-
+    @discardableResult
     func request(_ block: (NSFetchRequest<T>)->Void) -> NSFetchRequest<T> {
-        return modify(block).request
+        block(request)
+        return request
     }
 }
