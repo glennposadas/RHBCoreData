@@ -1,6 +1,6 @@
 import CoreData
 
-public class CoreDataStack {
+open class CoreDataStack {
     public let persistentContainer: NSPersistentContainer
 
     public lazy var writingContext = persistentContainer.newBackgroundContext()
