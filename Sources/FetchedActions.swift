@@ -1,7 +1,13 @@
 import CoreData
 
 public class FetchedActions<T: NSFetchRequestResult> {
-    weak var controller: NSFetchedResultsController<T>?
+    public weak var controller: NSFetchedResultsController<T>? {
+        didSet {
+            oldValue?.delegate = nil
+            controller?.delegate = delegate
+        }
+    }
+
     let delegate = FetchedResultsControllerDelegateWithBlocks<T>()
 
     public var blocks: FetchedBlocks<T> {
