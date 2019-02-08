@@ -9,11 +9,16 @@ public class FetchRequest<T: NSManagedObject> {
     public init() {}
 }
 
-
 public extension FetchRequest {
     @discardableResult
     func predicate<P: NSPredicate & TypedPredicateProtocol>(_ p: P?) -> Self where P.Root == T {
         request.predicate = p
+        return self
+    }
+
+    @discardableResult
+    func addSortDescriptor(_ s: SortDescriptor<T>) -> Self {
+        request.sortDescriptors = (request.sortDescriptors ?? []) + [s]
         return self
     }
 
