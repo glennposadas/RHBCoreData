@@ -1,4 +1,5 @@
 import CoreData
+import RHBFoundation
 
 public extension NSManagedObjectContext {
     func performTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
@@ -15,8 +16,8 @@ public extension NSManagedObjectContext {
     }
 
     func refetch<S: Sequence>(_ sequence: S) throws -> [S.Element] where S.Element: NSManagedObject {
-        let request = FetchRequestBuilder<S.Element>().request {
-            $0.predicate = NSPredicate(format: "self IN %@", argumentArray: [sequence])
+        let request = FetchRequest<S.Element>.fetchRequest() ~ {
+            $0.predicate = NSPredicate(format: "self IN %@", [sequence])
         }
         return try fetch(request)
     }
