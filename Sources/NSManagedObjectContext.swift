@@ -17,7 +17,7 @@ public extension NSManagedObjectContext {
 
     func refetch<S: Sequence>(_ sequence: S) throws -> [S.Element] where S.Element: NSManagedObject {
         let request = FetchRequest<S.Element>.fetchRequest() ~ {
-            $0.predicate = NSPredicate(format: "self IN %@", [sequence])
+            $0.predicate = ComparisonPredicate(inValues: sequence)
         }
         return try fetch(request)
     }
