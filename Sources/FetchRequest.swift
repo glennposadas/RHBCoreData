@@ -17,8 +17,16 @@ public extension FetchRequest {
     }
 
     @discardableResult
-    func addSortDescriptor(_ s: SortDescriptor<T>) -> Self {
-        request.sortDescriptors = (request.sortDescriptors ?? []) + [s]
+    func addSortDescriptor<V: Comparable>(_ s: KeyPath<T, Optional<V>>, _ ascending: Bool = true) -> Self {
+        let desc = NSSortDescriptor(keyPath: s, ascending: ascending)
+        request.sortDescriptors = (request.sortDescriptors ?? []) + [desc]
+        return self
+    }
+
+    @discardableResult
+    func addSortDescriptor<V: Comparable>(_ s: KeyPath<T, V>, _ ascending: Bool = true) -> Self {
+        let desc = NSSortDescriptor(keyPath: s, ascending: ascending)
+        request.sortDescriptors = (request.sortDescriptors ?? []) + [desc]
         return self
     }
 
