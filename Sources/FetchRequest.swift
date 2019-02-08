@@ -12,8 +12,8 @@ public class FetchRequest<T: NSManagedObject> {
 
 public extension FetchRequest {
     @discardableResult
-    func predicate<P: NSPredicate & TypedPredicateProtocol>(_ p: ()->P?) -> Self where P.Root == T {
-        request.predicate = p()
+    func predicate<P: NSPredicate & TypedPredicateProtocol>(_ p: P?) -> Self where P.Root == T {
+        request.predicate = p
         return self
     }
 
