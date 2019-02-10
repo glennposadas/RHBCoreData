@@ -10,7 +10,7 @@ public class FetchRequest<T: NSManagedObject> {
 }
 
 extension FetchRequest {
-    func addSortAnyValue<V>(by keyPath: KeyPath<T, V>, ascending: Bool) -> Self {
+    func addUnconstrainedSort<V>(by keyPath: KeyPath<T, V>, ascending: Bool) -> Self {
         let desc = NSSortDescriptor(keyPath: keyPath, ascending: ascending)
         request.sortDescriptors = (request.sortDescriptors ?? []) + [desc]
         return self
@@ -26,12 +26,12 @@ public extension FetchRequest {
 
     @discardableResult
     func addSort<V: Comparable>(by keyPath: KeyPath<T, Optional<V>>, ascending: Bool) -> Self {
-        return addSortAnyValue(by: keyPath, ascending: ascending)
+        return addUnconstrainedSort(by: keyPath, ascending: ascending)
     }
 
     @discardableResult
     func addSort<V: Comparable>(by keyPath: KeyPath<T, V>, ascending: Bool) -> Self {
-        return addSortAnyValue(by: keyPath, ascending: ascending)
+        return addUnconstrainedSort(by: keyPath, ascending: ascending)
     }
 
     var predicate: CompoundPredicate<T>? {
