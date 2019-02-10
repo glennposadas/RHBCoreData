@@ -22,7 +22,17 @@ public extension FetchRequest {
         self.init()
         self.predicate(predicate)
     }
-    
+
+    convenience init<V: Comparable>(sortBy keyPath: KeyPath<T, Optional<V>>, ascending: Bool) {
+        self.init()
+        self.addSort(by: keyPath, ascending: ascending)
+    }
+
+    convenience init<V: Comparable>(sortBy keyPath: KeyPath<T, V>, ascending: Bool) {
+        self.init()
+        self.addSort(by: keyPath, ascending: ascending)
+    }
+
     @discardableResult
     func predicate<P: NSPredicate & TypedPredicateProtocol>(_ p: P?) -> Self where P.Root == T {
         request.predicate = p
