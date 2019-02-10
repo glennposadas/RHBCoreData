@@ -5,8 +5,16 @@ public class FetchRequest<T: NSManagedObject> {
     public static func fetchRequest() -> NSFetchRequest<T> {
         return T.fetchRequest() as! NSFetchRequest<T>
     }
-    public let request = FetchRequest<T>.fetchRequest()
+    public let request = FetchRequest.fetchRequest()
     public init() {}
+}
+
+extension FetchRequest {
+    func addSortAnyValue<V>(by keyPath: KeyPath<T, V>, ascending: Bool) -> Self {
+        let desc = NSSortDescriptor(keyPath: keyPath, ascending: ascending)
+        request.sortDescriptors = (request.sortDescriptors ?? []) + [desc]
+        return self
+    }
 }
 
 public extension FetchRequest {
@@ -17,17 +25,13 @@ public extension FetchRequest {
     }
 
     @discardableResult
-    func addSort<V: Comparable>(by keyPath: KeyPath<T, Optional<V>>, ascending: Bool = true) -> Self {
-        let desc = NSSortDescriptor(keyPath: keyPath, ascending: ascending)
-        request.sortDescriptors = (request.sortDescriptors ?? []) + [desc]
-        return self
+    func addSort<V: Comparable>(by keyPath: KeyPath<T, Optional<V>>, ascending: Bool) -> Self {
+        return addSortAnyValue(by: keyPath, ascending: ascending)
     }
 
     @discardableResult
-    func addSort<V: Comparable>(by keyPath: KeyPath<T, V>, ascending: Bool = true) -> Self {
-        let desc = NSSortDescriptor(keyPath: keyPath, ascending: ascending)
-        request.sortDescriptors = (request.sortDescriptors ?? []) + [desc]
-        return self
+    func addSort<V: Comparable>(by keyPath: KeyPath<T, V>, ascending: Bool) -> Self {
+        return addSortAnyValue(by: keyPath, ascending: ascending)
     }
 
     var predicate: CompoundPredicate<T>? {
