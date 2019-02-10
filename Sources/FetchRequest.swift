@@ -7,10 +7,6 @@ public class FetchRequest<T: NSManagedObject> {
     }
     public let request = FetchRequest.fetchRequest()
     public init() {}
-    convenience init<P: NSPredicate & TypedPredicateProtocol>(_ predicate: P) where P.Root == T  {
-        self.init()
-        self.predicate(predicate)
-    }
 }
 
 extension FetchRequest {
@@ -22,6 +18,11 @@ extension FetchRequest {
 }
 
 public extension FetchRequest {
+    convenience init<P: NSPredicate & TypedPredicateProtocol>(_ predicate: P) where P.Root == T  {
+        self.init()
+        self.predicate(predicate)
+    }
+    
     @discardableResult
     func predicate<P: NSPredicate & TypedPredicateProtocol>(_ p: P?) -> Self where P.Root == T {
         request.predicate = p
