@@ -7,7 +7,7 @@ public class FetchRequest<T: NSManagedObject> {
     }
     public let request = FetchRequest.fetchRequest()
     public init() {}
-    convenience init<P: NSPredicate & TypedPredicateProtocol>(predicate: P) where P.Root == T  {
+    convenience init<P: NSPredicate & TypedPredicateProtocol>(_ predicate: P) where P.Root == T  {
         self.init()
         self.predicate(predicate)
     }
