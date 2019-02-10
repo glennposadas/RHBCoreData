@@ -7,6 +7,10 @@ public class FetchRequest<T: NSManagedObject> {
     }
     public let request = FetchRequest.fetchRequest()
     public init() {}
+    convenience init<P: NSPredicate & TypedPredicateProtocol>(predicate: P) where P.Root == T  {
+        self.init()
+        self.predicate(predicate)
+    }
 }
 
 extension FetchRequest {
@@ -34,7 +38,7 @@ public extension FetchRequest {
         return addUnconstrainedSort(by: keyPath, ascending: ascending)
     }
 
-    var predicate: CompoundPredicate<T>? {
+    var compoundPredicate: CompoundPredicate<T>? {
         guard let pred = request.predicate else {
             return nil
         }
