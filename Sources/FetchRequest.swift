@@ -38,7 +38,7 @@ public extension FetchRequest {
         return addUnconstrainedSort(by: keyPath, ascending: ascending)
     }
 
-    var compoundPredicate: CompoundPredicate<T>? {
+    var predicate: CompoundPredicate<T>? {
         guard let pred = request.predicate else {
             return nil
         }
