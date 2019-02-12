@@ -18,7 +18,7 @@ extension FetchRequest {
 }
 
 public extension FetchRequest {
-    convenience init<P: NSPredicate & TypedPredicateProtocol>(_ predicate: P) where P.Root == T  {
+    convenience init<P: NSPredicate & TypedPredicateProtocol>(predicate: P) where P.Root == T  {
         self.init()
         self.predicate(predicate)
     }
