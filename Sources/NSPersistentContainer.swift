@@ -1,6 +1,11 @@
 import CoreData
 
 public extension NSPersistentContainer {
+    convenience init(name: String = "", memoryModel model: NSManagedObjectModel) {
+        self.init(name: name, managedObjectModel: model)
+        persistentStoreDescriptions.first?.type = NSInMemoryStoreType
+    }
+
     convenience init(storeUrl: URL, model: NSManagedObjectModel) {
         self.init(name: storeUrl.deletingPathExtension().lastPathComponent, managedObjectModel: model)
         persistentStoreDescriptions.first?.url = storeUrl
