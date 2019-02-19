@@ -13,7 +13,9 @@ open class CoreDataStack {
         self.readingContext = persistentContainer.newBackgroundContext() ~ {
             $0.automaticallyMergesChangesFromParent = true
         }
-        self.writingContext = persistentContainer.newBackgroundContext()
+        self.writingContext = persistentContainer.newBackgroundContext() ~ {
+            $0.automaticallyMergesChangesFromParent = false
+        }
     }
 
     deinit {
