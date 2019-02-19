@@ -27,18 +27,20 @@ open class CoreDataStack {
 
 public extension CoreDataStack {
     func performWrite(_ block: @escaping (NSManagedObjectContext) -> Void) {
-        writingContext.performTask {[weak mainContext] context in
-            mainContext.map {_ in
-                block(context)
+        writingContext.performTask {[weak self] context in
+            guard self?.mainContext != nil else {
+                return
             }
+            block(context)
         }
     }
 
     func performRead(_ block: @escaping (NSManagedObjectContext) -> Void) {
-        readingContext.performTask {[weak mainContext] context in
-            mainContext.map {_ in
-                block(context)
+        readingContext.performTask {[weak self] context in
+            guard self?.mainContext != nil else {
+                return
             }
+            block(context)
         }
     }
 }
