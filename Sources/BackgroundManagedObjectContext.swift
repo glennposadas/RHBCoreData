@@ -8,9 +8,7 @@ public class BackgroundManagedObjectContext {
     }
 
     deinit {
-        let oldContext = context
-        context = nil
-        oldContext?.performAndWait {}
+        shutdown()
     }
 }
 
@@ -24,6 +22,13 @@ public extension BackgroundManagedObjectContext {
             self?.context.map {
                 block($0)
             }
+        }
+    }
+
+    func shutdown() {
+        context.map {
+            context = nil
+            $0.performAndWait {}
         }
     }
 }
