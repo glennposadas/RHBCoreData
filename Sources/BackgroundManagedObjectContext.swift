@@ -16,10 +16,6 @@ public class BackgroundManagedObjectContext {
 }
 
 public extension BackgroundManagedObjectContext {
-    convenience init(container: NSPersistentContainer, _ setup: (NSManagedObjectContext)->Void) {
-        self.init(container.newBackgroundContext() ~ setup)
-    }
-
     func performTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
         context?.perform { [weak self] in
             self?.context.map {
