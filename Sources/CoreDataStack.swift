@@ -2,45 +2,30 @@ import CoreData
 import RHBFoundation
 
 open class CoreDataStack {
-    let readingContext: NSManagedObjectContext
-    let writingContext: NSManagedObjectContext
-    public private(set) weak var mainContext: NSManagedObjectContext!
+    public let readingContext: BackgroundManagedObjectContext
+    public let writingContext: BackgroundManagedObjectContext
+    public let mainContext: NSManagedObjectContext
 
     public init(_ persistentContainer: NSPersistentContainer) {
         self.mainContext = persistentContainer.viewContext ~ {
             $0.automaticallyMergesChangesFromParent = true
         }
-        self.readingContext = persistentContainer.newBackgroundContext() ~ {
+        self.readingContext = BackgroundManagedObjectContext(container: persistentContainer) {
             $0.automaticallyMergesChangesFromParent = true
         }
-        self.writingContext = persistentContainer.newBackgroundContext() ~ {
+        self.writingContext = BackgroundManagedObjectContext(container: persistentContainer) {
             $0.automaticallyMergesChangesFromParent = false
         }
     }
 
     deinit {
-        mainContext = nil
-        writingContext.performAndWait {}
-        readingContext.performAndWait {}
+        shutdown()
     }
 }
 
 public extension CoreDataStack {
-    func performWrite(_ block: @escaping (NSManagedObjectContext) -> Void) {
-        writingContext.performTask {[weak self] context in
-            guard self?.mainContext != nil else {
-                return
-            }
-            block(context)
-        }
-    }
-
-    func performRead(_ block: @escaping (NSManagedObjectContext) -> Void) {
-        readingContext.performTask {[weak self] context in
-            guard self?.mainContext != nil else {
-                return
-            }
-            block(context)
-        }
+    func shutdown() {
+        writingContext.shutdown()
+        readingContext.shutdown()
     }
 }
