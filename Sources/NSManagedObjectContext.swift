@@ -18,6 +18,7 @@ public extension NSManagedObjectContext {
         return NSFetchedResultsController(fetchRequest: request, managedObjectContext: self, sectionNameKeyPath: sectionNameKeyPath, cacheName: cacheName)
     }
 
+    @discardableResult
     func createObject<T: NSManagedObject>(_ initObject: (T) -> Void = { _ in }) -> T {
         let t = T(context: self)
         initObject(t)
