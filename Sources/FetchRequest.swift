@@ -5,7 +5,9 @@ public class FetchRequest<T: NSManagedObject> {
     public static func fetchRequest() -> NSFetchRequest<T> {
         return T.fetchRequest() as! NSFetchRequest<T>
     }
+
     public let request = FetchRequest.fetchRequest()
+    
     public init() {}
 }
 

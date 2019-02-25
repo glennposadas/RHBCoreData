@@ -3,6 +3,7 @@ import RHBFoundation
 
 public class BackgroundManagedObjectContext {
     var context: NSManagedObjectContext?
+
     public init(_ context: NSManagedObjectContext) {
         self.context = context
     }

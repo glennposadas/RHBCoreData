@@ -3,7 +3,9 @@ import RHBFoundation
 
 open class CoreDataStack {
     public let mainContext: NSManagedObjectContext
+
     public let writingContext: BackgroundManagedObjectContext
+    
     public let readingContext: BackgroundManagedObjectContext
 
     public init(_ persistentContainer: NSPersistentContainer) {
