@@ -1,37 +1,6 @@
 import CoreData
 import RHBFoundation
 
-public class BackgroundManagedObjectContext {
-    var context: NSManagedObjectContext?
-    public init(_ context: NSManagedObjectContext) {
-        self.context = context
-    }
-
-    deinit {
-        shutdown()
-    }
-}
-
-public extension BackgroundManagedObjectContext {
-    convenience init(container: NSPersistentContainer, _ block: (NSManagedObjectContext)->Void) {
-        self.init(container.newBackgroundContext() ~ block)
-    }
-
-    func shutdown() {
-        let old = context
-        context = nil
-        old?.performAndWait {}
-    }
-
-    func performTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
-        context?.perform { [weak self] in
-            self?.context.map {
-                block($0)
-            }
-        }
-    }
-}
-
 public extension NSManagedObjectContext {
     func saveChanges() throws {
         guard hasChanges else {

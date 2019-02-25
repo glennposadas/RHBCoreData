@@ -17,15 +17,4 @@ open class CoreDataStack {
             $0.automaticallyMergesChangesFromParent = false
         }
     }
-
-    deinit {
-        shutdown()
-    }
-}
-
-public extension CoreDataStack {
-    func shutdown() {
-        writingContext.shutdown()
-        readingContext.shutdown()
-    }
 }
