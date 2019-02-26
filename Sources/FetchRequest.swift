@@ -52,9 +52,8 @@ public extension FetchRequest {
     }
 
     var predicate: CompoundPredicate<T>? {
-        guard let pred = request.predicate else {
-            return nil
+        return request.predicate.map {
+            $0 as? CompoundPredicate<T> ?? CompoundPredicate(type: .and, subpredicates: [$0])
         }
-        return pred as? CompoundPredicate<T> ?? CompoundPredicate(type: .and, subpredicates: [pred])
     }
 }
