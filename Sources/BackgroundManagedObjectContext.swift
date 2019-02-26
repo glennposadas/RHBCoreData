@@ -4,8 +4,8 @@ import RHBFoundation
 public class BackgroundManagedObjectContext {
     var context: NSManagedObjectContext?
 
-    public init(_ context: NSManagedObjectContext) {
-        self.context = context
+    public init(_ container: NSPersistentContainer, _ setup: (NSManagedObjectContext)->Void) {
+        self.context = container.newBackgroundContext() ~ setup
     }
 
     deinit {
