@@ -22,5 +22,9 @@ let package = Package(
             name: "RHBCoreData",
             dependencies: [],
             path: "Sources"),
+        .testTarget(
+            name: "RHBCoreDataTests",
+            dependencies: ["RHBCoreData"],
+            path: "Tests"),
     ]
 )
