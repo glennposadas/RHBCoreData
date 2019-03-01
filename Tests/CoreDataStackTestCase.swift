@@ -22,4 +22,17 @@ class CoreDataStackTestCase: XCTestCase {
         XCTAssertNotNil(ent)
         XCTAssert(ent?.id == t.id)
     }
+
+    func testCoredataDeinit() {
+        var counter = 0
+        let N = 50
+        (0..<N).forEach { _ in
+            stack.writingContext.performTask { context in
+                counter += 1
+                try! context.save()
+            }
+        }
+        stack = nil
+        XCTAssert(counter < N)
+    }
 }
