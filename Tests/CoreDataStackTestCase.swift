@@ -97,23 +97,24 @@ class CoreDataStackTestCase: XCTestCase {
 
     func testSections() {
         let ex = expectation(description: #function)
-        let fr = FetchRequest(sortBy: \TestEntity.id, ascending: true).request
-        var cont: NSFetchedResultsController<TestEntity>!
-        var act: FetchedActions<TestEntity>!
+        let fetchRequest = FetchRequest(sortBy: \TestEntity.id, ascending: true).request
+        var data: FetchedData<TestEntity>!
+        var actions: FetchedActions<TestEntity>!
         stack.readingContext.performTask { context in
-            cont = context.createFetchedResultsController(request: fr)
+            let cont = context.createFetchedResultsController(request: fetchRequest)
             try! cont.performFetch()
-            act = FetchedActions(cont)
-            act.blocks.didChange = {
+            data = FetchedData(cont)
+            actions = FetchedActions(cont)
+            actions.blocks.didChange = {
                 ex.fulfill()
+                XCTAssert(data.numberOfObjects == 1)
             }
-            act.blocks.didChangeObject[.insert] = { ent, _, _ in
+            actions.blocks.didChangeObject[.insert] = { ent, _, _ in
                 XCTAssert(ent.id == #function)
             }
             self.stack.writingContext.performTask { context in
                 context.createObject() { (testEntity: TestEntity) in
                     testEntity.id = #function
-                    try! context.saveChanges()
                 }
                 try! context.saveChanges()
             }
