@@ -12,15 +12,41 @@ class CoreDataStackTestCase: XCTestCase {
         stack = CoreDataStack(container)
     }
 
-    func testSaveAndFetch() {
-        let t: TestEntity = stack.mainContext.createObject() {
-            $0.id = "id"
+    func testCRUD() {
+        stack.writingContext.performTask { context in
+            context.createObject() { (testEntity: TestEntity) in
+                testEntity.id = #function
+            }
+            try! context.saveChanges()
         }
-        try! stack.mainContext.save()
-        let fr = FetchRequest(predicate: \TestEntity.id == t.id).request
-        let ent = try! stack.mainContext.fetch(fr).first
-        XCTAssertNotNil(ent)
-        XCTAssert(ent?.id == t.id)
+
+        stack.writingContext.performTask { context in
+            let fetchRequest = FetchRequest(predicate: \TestEntity.id == #function).request
+            let testEntity = try! context.fetch(fetchRequest).first!
+            XCTAssert(testEntity.id == #function)
+            testEntity.id = nil
+            try! context.saveChanges()
+        }
+
+        stack.writingContext.performTask { context in
+            let fetchRequest = FetchRequest(predicate: \TestEntity.id == nil).request
+            let testEntity = try! context.fetch(fetchRequest).first!
+            XCTAssert(testEntity.id == nil)
+            testEntity.deleteFromManagedObjectContext()
+            try! context.saveChanges()
+        }
+
+        stack.writingContext.performTask { context in
+            let fetchRequest = FetchRequest<TestEntity>.fetchRequest()
+            XCTAssert(try! context.fetch(fetchRequest).isEmpty)
+        }
+
+        let ex = expectation(description: #function)
+        stack.writingContext.performTask { _ in
+            ex.fulfill()
+        }
+
+        waitForExpectations(timeout: 1, handler: nil)
     }
 
     func testCoredataDeinit() {
@@ -34,9 +60,7 @@ class CoreDataStackTestCase: XCTestCase {
         }
         let coord = stack.persistentContainer.persistentStoreCoordinator
         stack = nil
-        coord.persistentStores.forEach {
-            try! coord.remove($0)
-        }
+        try! coord.removeStores()
         XCTAssert(counter < N)
     }
 }

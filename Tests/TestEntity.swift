@@ -1,5 +1,5 @@
 import CoreData
 
-public class TestEntity: NSManagedObject {
+class TestEntity: NSManagedObject {
     @NSManaged public var id: String!
 }
