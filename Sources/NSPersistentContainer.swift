@@ -1,8 +1,8 @@
 import CoreData
 
 public extension NSPersistentContainer {
-    convenience init(name: String = "", memoryModel model: NSManagedObjectModel) {
-        self.init(name: name, managedObjectModel: model)
+    convenience init(memoryModel model: NSManagedObjectModel) {
+        self.init(name: NSInMemoryStoreType, managedObjectModel: model)
         persistentStoreDescriptions.first?.type = NSInMemoryStoreType
     }
 
@@ -15,17 +15,15 @@ public extension NSPersistentContainer {
         try persistentStoreDescriptions.forEach { try persistentStoreCoordinator.destroyPersistentStore(description: $0) }
     }
 
-    @discardableResult
-    func loadIfNotRecreate() throws -> Bool {
+    func loadIfNotRecreate() throws {
         try createPersistentStoreDirectories()
         if loadPersistentStoresSync().isEmpty {
-            return true
+            return
         }
         try destroyPersistentStores()
         if let error = loadPersistentStoresSync().first?.1 {
             throw error
         }
-        return false
     }
 
     func createPersistentStoreDirectories() throws {
