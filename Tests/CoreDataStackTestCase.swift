@@ -32,7 +32,11 @@ class CoreDataStackTestCase: XCTestCase {
                 try! context.save()
             }
         }
+        let coord = stack.persistentContainer.persistentStoreCoordinator
         stack = nil
+        coord.persistentStores.forEach {
+            try! coord.remove($0)
+        }
         XCTAssert(counter < N)
     }
 }
