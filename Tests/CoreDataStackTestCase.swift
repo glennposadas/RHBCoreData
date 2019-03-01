@@ -68,12 +68,30 @@ class CoreDataStackTestCase: XCTestCase {
     func testCoreDataAsyncOk() {
         let ex = expectation(description: #function)
         try! container.persistentStoreCoordinator.removeStores()
-        container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("xxx1.sqlite")))
+        container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: NSPersistentContainer.defaultDirectoryURL().appendingPathComponent(#function)))
         XCTAssert(container.persistentStoreDescriptions.count == 2)
         container.loadPersistentStoresAsync { errors in
             XCTAssert(errors.isEmpty)
             ex.fulfill()
         }
         waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testCoreDataAsyncErrors() {
+        let ex = expectation(description: #function)
+        try! container.persistentStoreCoordinator.removeStores()
+        container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx1.sqlite")))
+        XCTAssert(container.persistentStoreDescriptions.count == 2)
+        container.loadPersistentStoresAsync { errors in
+            XCTAssert(errors.count == 1)
+            ex.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testCoreDataSyncErrors() {
+        try! container.persistentStoreCoordinator.removeStores()
+        container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx1.sqlite")))
+        XCTAssert(container.loadPersistentStoresSync().count == 1)
     }
 }
