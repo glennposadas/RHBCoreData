@@ -1,6 +1,5 @@
 import CoreData
 
-//NSFetchedResultsController suck because its objective-c generic, so we wrap it
 public class FetchedData<T: NSFetchRequestResult> {
     public let controller: NSFetchedResultsController<T>
     
