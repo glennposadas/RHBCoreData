@@ -4,10 +4,11 @@ import CoreData
 import RHBFoundation
 
 class CoreDataStackTestCase: XCTestCase {
+    var container: NSPersistentContainer!
     var stack: CoreDataStack!
 
     override func setUp() {
-        let container = NSPersistentContainer(memoryModel: .testModel)
+        container = NSPersistentContainer(memoryModel: .testModel)
         XCTAssert(container.loadPersistentStoresSync().isEmpty)
         stack = CoreDataStack(container)
     }
@@ -62,5 +63,17 @@ class CoreDataStackTestCase: XCTestCase {
         stack = nil
         try! coord.removeStores()
         XCTAssert(counter < N)
+    }
+
+    func testCoreDataAsyncOk() {
+        let ex = expectation(description: #function)
+        try! container.persistentStoreCoordinator.removeStores()
+        container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("xxx1.sqlite")))
+        XCTAssert(container.persistentStoreDescriptions.count == 2)
+        container.loadPersistentStoresAsync { errors in
+            XCTAssert(errors.isEmpty)
+            ex.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
     }
 }
