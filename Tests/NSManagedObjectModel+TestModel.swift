@@ -15,9 +15,9 @@ extension NSManagedObjectModel {
                     NSAttributeDescription() ~ {
                         $0.name = #keyPath(TestEntity.text)
                         $0.attributeType = .stringAttributeType
-                    }
+                    },
                 ]
-            }
+            },
         ]
     }
 }

@@ -7,7 +7,7 @@ public class FetchRequest<T: NSManagedObject> {
     }
 
     public let request = FetchRequest.fetchRequest()
-    
+
     public init() {}
 }
 
@@ -20,19 +20,19 @@ extension FetchRequest {
 }
 
 public extension FetchRequest {
-    convenience init<P: NSPredicate & TypedPredicateProtocol>(predicate: P) where P.Root == T  {
+    convenience init<P: NSPredicate & TypedPredicateProtocol>(predicate: P) where P.Root == T {
         self.init()
         self.predicate(predicate)
     }
 
-    convenience init<V: Comparable>(sortBy keyPath: KeyPath<T, Optional<V>>, ascending: Bool) {
+    convenience init<V: Comparable>(sortBy keyPath: KeyPath<T, V?>, ascending: Bool) {
         self.init()
-        self.addSort(by: keyPath, ascending: ascending)
+        addSort(by: keyPath, ascending: ascending)
     }
 
     convenience init<V: Comparable>(sortBy keyPath: KeyPath<T, V>, ascending: Bool) {
         self.init()
-        self.addSort(by: keyPath, ascending: ascending)
+        addSort(by: keyPath, ascending: ascending)
     }
 
     @discardableResult
@@ -42,7 +42,7 @@ public extension FetchRequest {
     }
 
     @discardableResult
-    func addSort<V: Comparable>(by keyPath: KeyPath<T, Optional<V>>, ascending: Bool) -> Self {
+    func addSort<V: Comparable>(by keyPath: KeyPath<T, V?>, ascending: Bool) -> Self {
         return addUnconstrainedSort(by: keyPath, ascending: ascending)
     }
 

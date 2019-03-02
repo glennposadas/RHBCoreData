@@ -15,7 +15,7 @@ open class CoreDataStack {
     public private(set) lazy var readingContext = BackgroundManagedObjectContext(persistentContainer) {
         $0.automaticallyMergesChangesFromParent = true
     }
-    
+
     public init(_ persistentContainer: NSPersistentContainer) {
         self.persistentContainer = persistentContainer
     }

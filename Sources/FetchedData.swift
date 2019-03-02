@@ -2,7 +2,7 @@ import CoreData
 
 public class FetchedData<T: NSFetchRequestResult> {
     public let controller: NSFetchedResultsController<T>
-    
+
     public init(_ controller: NSFetchedResultsController<T>) {
         self.controller = controller
     }

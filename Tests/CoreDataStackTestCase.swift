@@ -1,8 +1,8 @@
-import XCTest
-import RHBCoreData
 import CoreData
+import RHBCoreData
 import RHBFoundation
 import RHBFoundationTestUtilities
+import XCTest
 
 class CoreDataStackTestCase: XCTestCase {
     var container: NSPersistentContainer!
@@ -51,7 +51,7 @@ class CoreDataStackTestCase: XCTestCase {
     func testCoredataDeinit() {
         var counter = 0
         let N = 50
-        (0..<N).forEach { _ in
+        (0 ..< N).forEach { _ in
             stack.writingContext.performTask { context in
                 counter += 1
                 try! context.save()
@@ -122,13 +122,13 @@ class CoreDataStackTestCase: XCTestCase {
 
     func testFulfiller() {
         let N = 10
-        (0..<N*2).forEach { index in
+        (0 ..< N * 2).forEach { index in
             let ful = expectation(description: "\(#function) \(index)").fulfiller
             if index.isMultiple(of: 2) {
                 return
             }
             stack.writingContext.performTask { context in
-                context.createObject { (obj:TestEntity) in
+                context.createObject { (obj: TestEntity) in
                     obj.id = #function
                 }
                 try! context.save()
@@ -156,10 +156,10 @@ class CoreDataStackTestCase: XCTestCase {
         var deleted = false
         fetchedActions.blocks.willChange = {
             XCTAssert(willed == dided)
-            willed+=1
+            willed += 1
         }
         fetchedActions.blocks.didChange = {
-            dided+=1
+            dided += 1
             XCTAssert(willed == dided)
         }
         fetchedActions.blocks.didChangeObject[.insert] = { entity, path1, path2 in
