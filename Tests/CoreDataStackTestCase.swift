@@ -2,6 +2,7 @@ import XCTest
 import RHBCoreData
 import CoreData
 import RHBFoundation
+import RHBXCTest
 
 class CoreDataStackTestCase: XCTestCase {
     var container: NSPersistentContainer!

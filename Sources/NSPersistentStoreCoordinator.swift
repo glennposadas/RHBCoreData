@@ -6,4 +6,10 @@ public extension NSPersistentStoreCoordinator {
             try destroyPersistentStore(at: $0, ofType: description.type)
         }
     }
+    
+    func removeStores() throws {
+        try persistentStores.forEach {
+            try remove($0)
+        }
+    }
 }
