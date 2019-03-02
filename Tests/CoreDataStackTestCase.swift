@@ -122,4 +122,25 @@ class CoreDataStackTestCase: XCTestCase {
         }
         waitForExpectations(timeout: 1, handler: nil)
     }
+
+    func testFulfiller() {
+        let N = 10
+        (0..<N*2).forEach { index in
+            let ful = expectation(description: "\(#function) \(index)").fulfiller
+            if index.isMultiple(of: 2) {
+                return
+            }
+            stack.writingContext.performTask { context in
+                context.createObject { (obj:TestEntity) in
+                    obj.id = #function
+                }
+                try! context.save()
+                ful.noop()
+            }
+        }
+        waitForExpectations(timeout: 1) {
+            XCTAssertNil($0)
+            XCTAssert(try! self.stack.mainContext.fetch(TestEntity.fetchRequest()).count == N)
+        }
+    }
 }
