@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
     s.source_files = 'Sources/**/*'
     s.dependency 'RHBFoundation'
     s.test_spec 'RHBCoreDataTests' do |test_spec|
-        test_spec.dependency 'RHBXCTest'
+        test_spec.dependency 'RHBFoundationTestUtilities'
         test_spec.requires_app_host = false
         test_spec.source_files = 'Tests/**/*'
     end
