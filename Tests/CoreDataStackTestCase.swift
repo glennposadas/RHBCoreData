@@ -97,17 +97,15 @@ class CoreDataStackTestCase: XCTestCase {
         let ex = expectation(description: #function)
         let fetchRequest = FetchRequest(sortBy: \TestEntity.id, ascending: true).request
         var data: FetchedData<TestEntity>!
-        var actions: FetchedActions<TestEntity>!
         stack.readingContext.performTask { context in
             let cont = context.createFetchedResultsController(request: fetchRequest)
             try! cont.performFetch()
             data = FetchedData(cont)
-            actions = FetchedActions(cont)
-            actions.blocks.didChange = {
+            data.blocks.didChange = {
                 ex.fulfill()
                 XCTAssert(data.numberOfObjects == 1)
             }
-            actions.blocks.didChangeObject[.insert] = { ent, _, _ in
+            data.blocks.didChangeObject[.insert] = { ent, _, _ in
                 XCTAssert(ent.id == #function)
             }
             self.stack.writingContext.performTask { context in
@@ -146,7 +144,6 @@ class CoreDataStackTestCase: XCTestCase {
         let controller = stack.mainContext.createFetchedResultsController(request: fetchRequest)
         try! controller.performFetch()
         let fetchedData = FetchedData(controller)
-        let fetchedActions = FetchedActions(controller)
 
         var willed = 0
         var dided = 0
@@ -154,40 +151,40 @@ class CoreDataStackTestCase: XCTestCase {
         var updated = false
         var inserted = false
         var deleted = false
-        fetchedActions.blocks.willChange = {
+        fetchedData.blocks.willChange = {
             XCTAssert(willed == dided)
             willed += 1
         }
-        fetchedActions.blocks.didChange = {
+        fetchedData.blocks.didChange = {
             dided += 1
             XCTAssert(willed == dided)
         }
-        fetchedActions.blocks.didChangeObject[.insert] = { entity, path1, path2 in
+        fetchedData.blocks.didChangeObject[.insert] = { entity, path1, path2 in
             XCTAssertEqual(try! self.container.viewContext.existingObject(with: entity.objectID), entity)
             XCTAssert(path1 == path2)
             XCTAssertEqual(entity, fetchedData[path1])
             inserted = true
         }
-        fetchedActions.blocks.didChangeObject[.delete] = { entity, path1, path2 in
+        fetchedData.blocks.didChangeObject[.delete] = { entity, path1, path2 in
             XCTAssertEqual(try! self.container.viewContext.existingObject(with: entity.objectID), entity)
             XCTAssert(path1 == path2)
             XCTAssertFalse(fetchedData.controller.fetchedObjects!.contains(entity))
             deleted = true
         }
-        fetchedActions.blocks.didChangeObject[.update] = { entity, path1, path2 in
+        fetchedData.blocks.didChangeObject[.update] = { entity, path1, path2 in
             XCTAssertEqual(try! self.container.viewContext.existingObject(with: entity.objectID), entity)
             XCTAssert(path1 == path2)
             XCTAssertEqual(entity, fetchedData[path1])
             updated = true
         }
-        fetchedActions.blocks.didChangeObject[.move] = { entity, path1, path2 in
+        fetchedData.blocks.didChangeObject[.move] = { entity, path1, path2 in
             XCTAssertEqual(try! self.container.viewContext.existingObject(with: entity.objectID), entity)
             XCTAssert(path1 != path2)
             XCTAssertEqual(entity, fetchedData[path2])
             moved = true
         }
 
-        XCTAssert(fetchedData.sections.count == 1)
+        XCTAssert(fetchedData.controllerSections.count == 1)
         XCTAssert(fetchedData.numberOfObjects == 0)
 
         let t1 = TestEntity(context: container.viewContext)
@@ -197,7 +194,7 @@ class CoreDataStackTestCase: XCTestCase {
         XCTAssert(!inserted)
         try! container.viewContext.save()
         XCTAssert(inserted)
-        XCTAssert(fetchedData.sections.first?.numberOfObjects == 2)
+        XCTAssert(fetchedData.controllerSections.first?.numberOfObjects == 2)
 
         t1.text = UUID().uuidString
         XCTAssert(!updated)
@@ -213,7 +210,7 @@ class CoreDataStackTestCase: XCTestCase {
         XCTAssert(!deleted)
         try! container.viewContext.save()
         XCTAssert(deleted)
-        XCTAssert(fetchedData.sections.first?.numberOfObjects == 1)
+        XCTAssert(fetchedData.controllerSections.first?.numberOfObjects == 1)
 
         let ex = expectation(description: #function)
         stack.writingContext.performTask { context in

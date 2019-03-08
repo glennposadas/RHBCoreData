@@ -1,21 +1,19 @@
 import CoreData
 
-public class FetchedActions<T: NSFetchRequestResult> {
-    public weak var controller: NSFetchedResultsController<T>? {
-        didSet {
-            oldValue?.delegate = nil
-            controller?.delegate = delegate
-        }
-    }
 
-    let delegate = FetchedResultsControllerDelegateWithBlocks<T>()
+public class FetchedDataBlocks<T: NSFetchRequestResult> {
+    public var didChangeObject: [NSFetchedResultsChangeType: (T, IndexPath, IndexPath) -> Void] = [:]
+    public var didChangeSection: [NSFetchedResultsChangeType: (NSFetchedResultsSectionInfo, Int) -> Void] = [:]
+    public var willChange: (() -> Void)?
+    public var didChange: (() -> Void)?
+    public var sectionIndexTitle: ((String) -> String?)?
 
-    public var blocks: FetchedBlocks<T> {
-        return delegate.blocks
-    }
+    weak var controller: NSFetchedResultsController<T>?
+    var delegate: FetchedResultsControllerDelegateWithBlocks<T>!
 
-    public init(_ controller: NSFetchedResultsController<T>) {
+    init(_ controller: NSFetchedResultsController<T>) {
         self.controller = controller
+        self.delegate = FetchedResultsControllerDelegateWithBlocks(self)
         controller.delegate = delegate
     }
 
@@ -24,16 +22,12 @@ public class FetchedActions<T: NSFetchRequestResult> {
     }
 }
 
-public class FetchedBlocks<T: NSFetchRequestResult> {
-    public var didChangeObject: [NSFetchedResultsChangeType: (T, IndexPath, IndexPath) -> Void] = [:]
-    public var didChangeSection: [NSFetchedResultsChangeType: (NSFetchedResultsSectionInfo, Int) -> Void] = [:]
-    public var willChange: (() -> Void)?
-    public var didChange: (() -> Void)?
-    public var sectionIndexTitle: ((String) -> String?)?
-}
-
 class FetchedResultsControllerDelegateWithBlocks<T: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate {
-    let blocks = FetchedBlocks<T>()
+    let blocks: FetchedDataBlocks<T>
+
+    init(_ blocks: FetchedDataBlocks<T>) {
+        self.blocks = blocks
+    }
 
     func controllerDidChangeContent(_: NSFetchedResultsController<NSFetchRequestResult>) {
         blocks.didChange?()
