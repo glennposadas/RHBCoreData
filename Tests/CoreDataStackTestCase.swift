@@ -243,7 +243,7 @@ class CoreDataStackTestCase: XCTestCase {
 
 
         DispatchQueue.global().sync {
-            let t: TestEntity? = try? self.container.newBackgroundContext().existing(object: ent)
+            let t: TestEntity? = try? self.container.newBackgroundContext().existing(ent)
             XCTAssertNotNil(t)
         }
 
@@ -266,7 +266,7 @@ class CoreDataStackTestCase: XCTestCase {
                 XCTAssert(try! $0.fetch(fr1).first?.objectID == ent.objectID)
                 XCTAssert(try! $0.fetch(fr2).first?.objectID == ent.objectID)
                 XCTAssert(try! $0.refetch([ent]).first?.objectID == ent.objectID)
-                XCTAssert(try! $0.existing(object: ent)?.objectID == ent.objectID)
+                XCTAssert(try! $0.existing(ent)?.objectID == ent.objectID)
                 ex.fulfill()
             }
         }
