@@ -228,4 +228,31 @@ class CoreDataStackTestCase: XCTestCase {
             XCTAssert(willed > 0 && dided > 0 && willed == dided)
         }
     }
+
+    func testSelfIn() {
+        let ex = expectation(description: #function)
+        stack.writingContext.performTask {
+            let ent = TestEntity(context: $0)
+            try! $0.save()
+            let fr2 = TestEntity.fetchRequest() as! NSFetchRequest<TestEntity>
+            fr2.predicate = {
+                let ex1 = NSExpression(forKeyPath: \TestEntity.self)
+                let ex2 = NSExpression(forConstantValue: [ent])
+                return NSComparisonPredicate(leftExpression: ex1, rightExpression: ex2, modifier: .direct, type: .in)
+            }()
+            let fr1 = TestEntity.fetchRequest() as! NSFetchRequest<TestEntity>
+            fr1.predicate = {
+                let ex1 = NSExpression(format: "self")
+                let ex2 = NSExpression(forConstantValue: [ent])
+                return NSComparisonPredicate(leftExpression: ex1, rightExpression: ex2, modifier: .direct, type: .in)
+            }()
+            self.stack.readingContext.performTask {
+                XCTAssert(try! $0.fetch(fr1).first?.objectID == ent.objectID)
+                XCTAssert(try! $0.fetch(fr2).first?.objectID == ent.objectID)
+                XCTAssert(try! $0.refetch([ent]).first?.objectID == ent.objectID)
+                ex.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 }
