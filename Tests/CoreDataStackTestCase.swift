@@ -233,16 +233,21 @@ class CoreDataStackTestCase: XCTestCase {
         let ex = expectation(description: #function)
 
         var ent: TestEntity!
-        DispatchQueue.global().async {
-            self.container.newBackgroundContext() ~ { context in
-                context.performAndWait {
-                    ent = TestEntity(context: context)
-                    try! context.save()
-                }
+
+        self.container.newBackgroundContext() ~ { context in
+            context.performAndWait {
+                ent = TestEntity(context: context)
+                try! context.save()
             }
         }
 
-        DispatchQueue.global().async {
+
+        DispatchQueue.global().sync {
+            let t: TestEntity? = try? self.container.newBackgroundContext().existing(object: ent)
+            XCTAssertNotNil(t)
+        }
+
+        DispatchQueue.global().sync {
             let fr2 = TestEntity.fetchRequest() as! NSFetchRequest<TestEntity>
             fr2.predicate = {
                 let ex1 = NSExpression(forKeyPath: \TestEntity.self)
