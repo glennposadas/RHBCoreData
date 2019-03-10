@@ -14,7 +14,7 @@ public extension NSManagedObjectContext {
         return try fetch(request)
     }
 
-    func existing<T: NSManagedObject>(object: T) throws -> T? {
+    func existing<T: NSManagedObject>(_ object: T) throws -> T? {
         return try existingObject(with: object.objectID) as? T
     }
 
