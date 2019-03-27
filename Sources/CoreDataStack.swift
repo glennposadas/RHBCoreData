@@ -20,3 +20,32 @@ open class CoreDataStack {
         self.persistentContainer = persistentContainer
     }
 }
+
+public extension CoreDataStack {
+    func write(errorBlock: @escaping (Error?) -> Void, taskBlock: @escaping (NSManagedObjectContext) throws -> Void) {
+        write(resultBlock: { result in
+            do {
+                try result.get()
+                errorBlock(nil)
+            }
+            catch {
+                errorBlock(error)
+            }
+        }, taskBlock: taskBlock)
+    }
+
+    func write<T>(resultBlock: @escaping (Result<T, Error>) -> Void, taskBlock: @escaping (NSManagedObjectContext) throws -> T) {
+        writingContext.performTask { context in
+            defer {
+                context.reset()
+            }
+            do {
+                let value = try taskBlock(context)
+                try context.saveChanges()
+                resultBlock(.success(value))
+            } catch {
+                resultBlock(.failure(error))
+            }
+        }
+    }
+}
