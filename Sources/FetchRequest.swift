@@ -12,10 +12,8 @@ public class FetchRequest<T: NSManagedObject> {
 }
 
 extension FetchRequest {
-    func addUnconstrainedSort<V>(by keyPath: KeyPath<T, V>, ascending: Bool) -> Self {
-        let desc = NSSortDescriptor(keyPath: keyPath, ascending: ascending)
+    func addsort(_ desc: NSSortDescriptor) {
         request.sortDescriptors = (request.sortDescriptors ?? []) + [desc]
-        return self
     }
 }
 
@@ -35,20 +33,16 @@ public extension FetchRequest {
         addSort(by: keyPath, ascending: ascending)
     }
 
-    @discardableResult
-    func predicate<P: NSPredicate & TypedPredicateProtocol>(_ p: P?) -> Self where P.Root == T {
+    func predicate<P: NSPredicate & TypedPredicateProtocol>(_ p: P?) where P.Root == T {
         request.predicate = p
-        return self
     }
 
-    @discardableResult
-    func addSort<V: Comparable>(by keyPath: KeyPath<T, V?>, ascending: Bool) -> Self {
-        return addUnconstrainedSort(by: keyPath, ascending: ascending)
+    func addSort<V: Comparable>(by keyPath: KeyPath<T, V?>, ascending: Bool) {
+        addsort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
     }
 
-    @discardableResult
-    func addSort<V: Comparable>(by keyPath: KeyPath<T, V>, ascending: Bool) -> Self {
-        return addUnconstrainedSort(by: keyPath, ascending: ascending)
+    func addSort<V: Comparable>(by keyPath: KeyPath<T, V>, ascending: Bool) {
+        addsort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
     }
 
     var predicate: CompoundPredicate<T>? {
