@@ -4,9 +4,22 @@ import RHBFoundation
 import RHBFoundationTestUtilities
 import XCTest
 
+extension CoreDataStack {
+    func createTestEntity(id: String, _ block: @escaping (Result<TestEntity, Error>) -> Void) {
+        writingContext.write(resultBlock: block) { context in
+            context.createObject {
+                $0.id = id
+            }
+        }
+    }
+}
+
 class CoreDataStackTestCase: XCTestCase {
     var container: NSPersistentContainer!
     var stack: CoreDataStack!
+    let errorBlock: (Error?) -> Void = {
+        XCTAssertNil($0)
+    }
 
     override func setUp() {
         container = NSPersistentContainer(memoryModel: .testModel)
@@ -14,32 +27,48 @@ class CoreDataStackTestCase: XCTestCase {
         stack = CoreDataStack(container)
     }
 
-    func testCRUD() {
-        stack.writingContext.performTask { context in
-            context.createObject() { (testEntity: TestEntity) in
-                testEntity.id = #function
+    func testExisting() {
+        let ex = expectation(description: #function)
+        stack.createTestEntity(id: "1") { result in
+            let ent = try! result.get()
+            self.stack.writingContext.write(errorBlock: self.errorBlock) { context in
+                let ent2 = context.existing(ent)
+                XCTAssertNotNil(ent2)
+                ent2?.deleteFromManagedObjectContext()
             }
-            try! context.saveChanges()
+            self.stack.writingContext.write(errorBlock: self.errorBlock) { context in
+                XCTAssertNil(context.existing(ent))
+                ex.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testCRUD() {
+        let errorBlock: (Error?) -> Void = {
+            XCTAssertNil($0)
         }
 
-        stack.writingContext.performTask { context in
+        stack.createTestEntity(id: #function) { result in
+            _=try! result.get()
+        }
+
+        stack.writingContext.write(errorBlock: errorBlock) { context in
             let fetchRequest = FetchRequest(predicate: \TestEntity.id == #function).request
             let testEntity = try! context.fetch(fetchRequest).first!
             XCTAssert(testEntity.id == #function)
             testEntity.id = nil
-            try! context.saveChanges()
         }
 
-        stack.writingContext.performTask { context in
+        stack.writingContext.write(errorBlock: errorBlock) { context in
             let fetchRequest = FetchRequest(predicate: \TestEntity.id == nil).request
             let testEntity = try! context.fetch(fetchRequest).first!
             XCTAssert(testEntity.id == nil)
             testEntity.deleteFromManagedObjectContext()
-            try! context.saveChanges()
         }
 
         let ex = expectation(description: #function)
-        stack.writingContext.performTask { context in
+        stack.writingContext.write(errorBlock: errorBlock) { context in
             let fetchRequest = FetchRequest<TestEntity>.fetchRequest()
             XCTAssert(try! context.fetch(fetchRequest).isEmpty)
             ex.fulfill()
@@ -241,32 +270,32 @@ class CoreDataStackTestCase: XCTestCase {
             }
         }
 
-
         DispatchQueue.global().sync {
-            let t: TestEntity? = try? self.container.newBackgroundContext().existing(ent)
-            XCTAssertNotNil(t)
+            XCTAssertNotNil(self.container.newBackgroundContext().existing(ent))
         }
 
-        DispatchQueue.global().sync {
-            let fr2 = TestEntity.fetchRequest() as! NSFetchRequest<TestEntity>
+        DispatchQueue.global().async {
+            let fr2 = FetchRequest<TestEntity>.fetchRequest()
             fr2.predicate = {
                 let ex1 = NSExpression(forKeyPath: \TestEntity.self)
                 let ex2 = NSExpression(forConstantValue: [ent])
                 return NSComparisonPredicate(leftExpression: ex1, rightExpression: ex2, modifier: .direct, type: .in)
             }()
+            fr2.returnsObjectsAsFaults = true
 
-            let fr1 = TestEntity.fetchRequest() as! NSFetchRequest<TestEntity>
+            let fr1 = FetchRequest<TestEntity>.fetchRequest()
             fr1.predicate = {
                 let ex1 = NSExpression(format: "self")
                 let ex2 = NSExpression(forConstantValue: [ent])
                 return NSComparisonPredicate(leftExpression: ex1, rightExpression: ex2, modifier: .direct, type: .in)
             }()
+            fr1.returnsObjectsAsFaults = true
 
             self.stack.readingContext.performTask {
                 XCTAssert(try! $0.fetch(fr1).first?.objectID == ent.objectID)
                 XCTAssert(try! $0.fetch(fr2).first?.objectID == ent.objectID)
                 XCTAssert(try! $0.refetch([ent]).first?.objectID == ent.objectID)
-                XCTAssert(try! $0.existing(ent)?.objectID == ent.objectID)
+                XCTAssert($0.existing(ent)?.objectID == ent.objectID)
                 ex.fulfill()
             }
         }

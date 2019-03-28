@@ -24,4 +24,31 @@ public extension BackgroundManagedObjectContext {
             }
         }
     }
+
+    func write<T>(resultBlock: @escaping (Result<T, Error>) -> Void, _ taskBlock: @escaping (NSManagedObjectContext) throws -> T) {
+        performTask { context in
+            defer {
+                context.reset()
+            }
+            do {
+                let value = try taskBlock(context)
+                try context.saveChanges()
+                resultBlock(.success(value))
+            } catch {
+                resultBlock(.failure(error))
+            }
+        }
+    }
+
+    func write(errorBlock: @escaping (Error?) -> Void, _ taskBlock: @escaping (NSManagedObjectContext) throws -> Void) {
+        write(resultBlock: { result in
+            do {
+                try result.get()
+                errorBlock(nil)
+            }
+            catch {
+                errorBlock(error)
+            }
+        }, taskBlock)
+    }
 }

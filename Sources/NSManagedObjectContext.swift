@@ -14,8 +14,8 @@ public extension NSManagedObjectContext {
         return try fetch(request)
     }
 
-    func existing<T: NSManagedObject>(_ object: T) throws -> T? {
-        return try existingObject(with: object.objectID) as? T
+    func existing<T: NSManagedObject>(_ object: T) -> T? {
+        return try? existingObject(with: object.objectID) as? T
     }
 
     func createFetchedResultsController<T: NSFetchRequestResult>(request: NSFetchRequest<T>, sectionNameKeyPath: String? = nil, cacheName: String? = nil) -> NSFetchedResultsController<T> {
@@ -23,9 +23,9 @@ public extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func createObject<T: NSManagedObject>(_ initObject: (T) -> Void = { _ in }) -> T {
-        let t = T(context: self)
-        initObject(t)
-        return t
+    func createObject<T: NSManagedObject>(_ initialize: (T) -> Void = { _ in }) -> T {
+        let object = T(context: self)
+        initialize(object)
+        return object
     }
 }
