@@ -30,13 +30,11 @@ public extension BackgroundManagedObjectContext {
             defer {
                 context.reset()
             }
-            do {
+            resultBlock(Result {
                 let value = try taskBlock(context)
                 try context.saveChanges()
-                resultBlock(.success(value))
-            } catch {
-                resultBlock(.failure(error))
-            }
+                return value
+            })
         }
     }
 
