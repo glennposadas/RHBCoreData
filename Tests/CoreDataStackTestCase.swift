@@ -23,7 +23,9 @@ class CoreDataStackTestCase: XCTestCase {
 
     override func setUp() {
         container = NSPersistentContainer(memoryModel: .testModel)
-        XCTAssert(container.loadPersistentStoresSync().isEmpty)
+        container.loadPersistentStores {
+            XCTAssertNil($1)
+        }
         stack = CoreDataStack(container)
     }
 
@@ -117,12 +119,6 @@ class CoreDataStackTestCase: XCTestCase {
             }
         }
         waitForExpectations(timeout: 1, handler: nil)
-    }
-
-    func testCoreDataSyncErrors() {
-        try! container.persistentStoreCoordinator.removeStores()
-        container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx1.sqlite")))
-        XCTAssert(container.loadPersistentStoresSync().count == 1)
     }
 
     func testBackgroundFetchedActionsInsert() {
