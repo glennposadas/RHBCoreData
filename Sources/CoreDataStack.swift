@@ -12,7 +12,7 @@ open class CoreDataStack {
         return persistentContainer.viewContext
     }()
 
-    public private(set) lazy var writingContext = BackgroundWriteObjectContext(persistentContainer) {
+    public private(set) lazy var writingContext = BackgroundManagedObjectContext(persistentContainer) {
         $0.automaticallyMergesChangesFromParent = false
     }
 
