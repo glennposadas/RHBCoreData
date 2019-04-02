@@ -1,11 +1,10 @@
 import CoreData
-import RHBFoundation
 
-public class BackgroundManagedObjectContext {
+open class BackgroundManagedObjectContext {
     var context: NSManagedObjectContext?
 
-    public init(_ container: NSPersistentContainer, _ setup: (NSManagedObjectContext) -> Void) {
-        context = container.newBackgroundContext() ~ setup
+    public init(_ context: NSManagedObjectContext) {
+        self.context = context
     }
 
     deinit {
@@ -17,6 +16,12 @@ public class BackgroundManagedObjectContext {
 }
 
 public extension BackgroundManagedObjectContext {
+    convenience init(_ container: NSPersistentContainer, _ setup: (NSManagedObjectContext) -> Void) {
+        let context = container.newBackgroundContext()
+        setup(context)
+        self.init(context)
+    }
+
     func performTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
         context?.perform { [weak self] in
             self?.context.map {
@@ -24,29 +29,5 @@ public extension BackgroundManagedObjectContext {
             }
         }
     }
-
-    func write<T>(resultBlock: @escaping (Result<T, Error>) -> Void, _ taskBlock: @escaping (NSManagedObjectContext) throws -> T) {
-        performTask { context in
-            defer {
-                context.reset()
-            }
-            resultBlock(Result {
-                let value = try taskBlock(context)
-                try context.saveChanges()
-                return value
-            })
-        }
-    }
-
-    func write(errorBlock: @escaping (Error?) -> Void, _ taskBlock: @escaping (NSManagedObjectContext) throws -> Void) {
-        write(resultBlock: { result in
-            do {
-                try result.get()
-                errorBlock(nil)
-            }
-            catch {
-                errorBlock(error)
-            }
-        }, taskBlock)
-    }
 }
+

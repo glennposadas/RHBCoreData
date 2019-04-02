@@ -1,22 +1,22 @@
 import CoreData
-import RHBFoundation
 
 open class CoreDataStack {
     public let persistentContainer: NSPersistentContainer
 
-    public private(set) lazy var mainContext = persistentContainer.viewContext ~ {
-        $0.automaticallyMergesChangesFromParent = true
+    public init(_ persistentContainer: NSPersistentContainer) {
+        self.persistentContainer = persistentContainer
     }
 
-    public private(set) lazy var writingContext = BackgroundManagedObjectContext(persistentContainer) {
+    public private(set) lazy var mainContext: NSManagedObjectContext = {
+        persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
+        return persistentContainer.viewContext
+    }()
+
+    public private(set) lazy var writingContext = BackgroundWriteObjectContext(persistentContainer) {
         $0.automaticallyMergesChangesFromParent = false
     }
 
     public private(set) lazy var readingContext = BackgroundManagedObjectContext(persistentContainer) {
         $0.automaticallyMergesChangesFromParent = true
-    }
-
-    public init(_ persistentContainer: NSPersistentContainer) {
-        self.persistentContainer = persistentContainer
     }
 }
