@@ -2,8 +2,8 @@ import CoreData
 import RHBFoundation
 
 public extension NSPersistentContainer {
-    convenience init(memoryModel model: NSManagedObjectModel, name: String = #function) {
-        self.init(name: name, managedObjectModel: model)
+    convenience init(inMemory model: NSManagedObjectModel) {
+        self.init(name: NSInMemoryStoreType, managedObjectModel: model)
         persistentStoreDescriptions.first?.type = NSInMemoryStoreType
     }
 

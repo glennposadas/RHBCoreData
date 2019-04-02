@@ -22,7 +22,7 @@ class CoreDataStackTestCase: XCTestCase {
     }
 
     override func setUp() {
-        container = NSPersistentContainer(memoryModel: .testModel)
+        container = NSPersistentContainer(inMemory: .testModel)
         container.loadPersistentStores {
             XCTAssertNil($1)
         }
