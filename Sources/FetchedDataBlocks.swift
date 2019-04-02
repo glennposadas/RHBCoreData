@@ -1,6 +1,5 @@
 import CoreData
 
-
 public class FetchedDataBlocks<T: NSFetchRequestResult> {
     public var didChangeObject: [NSFetchedResultsChangeType: (T, IndexPath, IndexPath) -> Void] = [:]
     public var didChangeSection: [NSFetchedResultsChangeType: (NSFetchedResultsSectionInfo, Int) -> Void] = [:]

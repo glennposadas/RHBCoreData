@@ -1,8 +1,9 @@
 import CoreData
+import RHBFoundation
 
 public extension NSPersistentContainer {
-    convenience init(memoryModel model: NSManagedObjectModel) {
-        self.init(name: NSInMemoryStoreType, managedObjectModel: model)
+    convenience init(memoryModel model: NSManagedObjectModel, name: String = #function) {
+        self.init(name: name, managedObjectModel: model)
         persistentStoreDescriptions.first?.type = NSInMemoryStoreType
     }
 
@@ -21,7 +22,7 @@ public extension NSPersistentContainer {
             return
         }
         try destroyPersistentStores()
-        if let error = loadPersistentStoresSync().first?.1 {
+        if let error = loadPersistentStoresSync().first {
             throw error
         }
     }
@@ -32,34 +33,38 @@ public extension NSPersistentContainer {
             .forEach { try FileManager().createDirectory(at: $0, withIntermediateDirectories: true) }
     }
 
-    func loadPersistentStoresSync() -> [(NSPersistentStoreDescription, Error)] {
+    func loadPersistentStoresSync() -> [ErrorWithValue<NSPersistentStoreDescription>] {
         persistentStoreDescriptions.forEach {
             $0.shouldAddStoreAsynchronously = false
         }
-        var errors: [(NSPersistentStoreDescription, Error)] = []
+        var errors: [ErrorWithValue<NSPersistentStoreDescription>] = []
         loadPersistentStores { storeDescription, error in
             error.map {
-                errors.append((storeDescription, $0))
+                errors.append(.valueAnderror(storeDescription, $0))
             }
         }
         return errors
     }
 
-    func loadPersistentStoresAsync(completionQueue: DispatchQueue = .main, _ block: @escaping ([(NSPersistentStoreDescription, Error)]) -> Void) {
+    func loadPersistentStoresAsync(completionQueue: DispatchQueue = .main, _ block: @escaping (Result<NSPersistentContainer, ErrorWithValue<[ErrorWithValue<NSPersistentStoreDescription>]>>) -> Void) {
         let group = DispatchGroup()
         persistentStoreDescriptions.forEach {
             $0.shouldAddStoreAsynchronously = true
             group.enter()
         }
-        var errors: [(NSPersistentStoreDescription, Error)] = []
+        var errors: [ErrorWithValue<NSPersistentStoreDescription>] = []
         loadPersistentStores { storeDescription, error in
             error.map {
-                errors.append((storeDescription, $0))
+                errors.append(.valueAnderror(storeDescription, $0))
             }
             group.leave()
         }
         group.notify(queue: completionQueue) {
-            block(errors)
+            if errors.isEmpty {
+                block(.success(self))
+            } else {
+                block(.failure(.value(errors)))
+            }
         }
     }
 }

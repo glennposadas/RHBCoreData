@@ -11,14 +11,6 @@ public class FetchedData<T: NSFetchRequestResult> {
 }
 
 public extension FetchedData {
-    var controllerSections: [NSFetchedResultsSectionInfo] {
-        return controller.sections ?? []
-    }
-
-    var numberOfObjects: Int {
-        return controllerSections.reduce(0) { $0 + $1.numberOfObjects }
-    }
-
     subscript(_ indexPath: IndexPath) -> T {
         return controller.object(at: indexPath)
     }

@@ -97,8 +97,8 @@ class CoreDataStackTestCase: XCTestCase {
         try! container.persistentStoreCoordinator.removeStores()
         container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: NSPersistentContainer.defaultDirectoryURL().appendingPathComponent(#function)))
         XCTAssert(container.persistentStoreDescriptions.count == 2)
-        container.loadPersistentStoresAsync { errors in
-            XCTAssert(errors.isEmpty)
+        container.loadPersistentStoresAsync { result in
+            XCTAssert(try! result.get() == self.container)
             ex.fulfill()
         }
         waitForExpectations(timeout: 1, handler: nil)
@@ -109,9 +109,12 @@ class CoreDataStackTestCase: XCTestCase {
         try! container.persistentStoreCoordinator.removeStores()
         container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx1.sqlite")))
         XCTAssert(container.persistentStoreDescriptions.count == 2)
-        container.loadPersistentStoresAsync { errors in
-            XCTAssert(errors.count == 1)
-            ex.fulfill()
+        container.loadPersistentStoresAsync { result in
+            do {
+                _ = try result.get()
+            } catch {
+                ex.fulfill()
+            }
         }
         waitForExpectations(timeout: 1, handler: nil)
     }
@@ -132,7 +135,7 @@ class CoreDataStackTestCase: XCTestCase {
             data = FetchedData(cont)
             data.blocks.didChange = {
                 ex.fulfill()
-                XCTAssert(data.numberOfObjects == 1)
+                XCTAssert(data.controller.sections?.first?.numberOfObjects == 1)
             }
             data.blocks.didChangeObject[.insert] = { ent, _, _ in
                 XCTAssert(ent.id == #function)
@@ -213,8 +216,8 @@ class CoreDataStackTestCase: XCTestCase {
             moved = true
         }
 
-        XCTAssert(fetchedData.controllerSections.count == 1)
-        XCTAssert(fetchedData.numberOfObjects == 0)
+        XCTAssert(fetchedData.controller.sections?.count == 1)
+        XCTAssert(fetchedData.controller.sections?.first?.numberOfObjects == 0)
 
         let t1 = TestEntity(context: container.viewContext)
         t1.id = "a"
@@ -223,7 +226,7 @@ class CoreDataStackTestCase: XCTestCase {
         XCTAssert(!inserted)
         try! container.viewContext.save()
         XCTAssert(inserted)
-        XCTAssert(fetchedData.controllerSections.first?.numberOfObjects == 2)
+        XCTAssert(fetchedData.controller.sections?.first?.numberOfObjects == 2)
 
         t1.text = UUID().uuidString
         XCTAssert(!updated)
@@ -239,7 +242,7 @@ class CoreDataStackTestCase: XCTestCase {
         XCTAssert(!deleted)
         try! container.viewContext.save()
         XCTAssert(deleted)
-        XCTAssert(fetchedData.controllerSections.first?.numberOfObjects == 1)
+        XCTAssert(fetchedData.controller.sections?.first?.numberOfObjects == 1)
 
         let ex = expectation(description: #function)
         stack.writingContext.performTask { context in
@@ -253,7 +256,7 @@ class CoreDataStackTestCase: XCTestCase {
 
         waitForExpectations(timeout: 1) { err in
             XCTAssertNil(err)
-            XCTAssert(fetchedData.numberOfObjects == 0)
+            XCTAssert(fetchedData.controller.sections?.first?.numberOfObjects == 0)
             XCTAssert(willed > 0 && dided > 0 && willed == dided)
         }
     }
