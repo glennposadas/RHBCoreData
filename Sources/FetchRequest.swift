@@ -44,10 +44,4 @@ public extension FetchRequest {
     func addSort<V: Comparable>(by keyPath: KeyPath<T, V>, ascending: Bool) {
         addsort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
     }
-
-    var predicate: CompoundPredicate<T>? {
-        return request.predicate.map {
-            $0 as? CompoundPredicate<T> ?? CompoundPredicate(type: .and, subpredicates: [$0])
-        }
-    }
 }
