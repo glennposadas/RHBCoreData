@@ -22,7 +22,7 @@ public class FetchedDataBlocks<T: NSFetchRequestResult> {
 }
 
 class FetchedResultsControllerDelegateWithBlocks<T: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate {
-    let blocks: FetchedDataBlocks<T>
+    weak var blocks: FetchedDataBlocks<T>!
 
     init(_ blocks: FetchedDataBlocks<T>) {
         self.blocks = blocks

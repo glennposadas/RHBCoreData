@@ -135,7 +135,7 @@ class CoreDataStackTestCase: XCTestCase {
             data = FetchedData(cont)
             data.blocks.didChange = {
                 ex.fulfill()
-                XCTAssert(data.controller.sections?.first?.numberOfObjects == 1)
+                XCTAssert(cont.sections?.first?.numberOfObjects == 1)
             }
             data.blocks.didChangeObject[.insert] = { ent, _, _ in
                 XCTAssert(ent.id == #function)
