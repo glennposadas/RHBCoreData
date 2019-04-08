@@ -2,6 +2,7 @@ import CoreData
 import RHBCoreData
 import RHBFoundation
 import RHBFoundationTestUtilities
+import RHBCoreDataTestUtilities
 import XCTest
 
 extension CoreDataStack {

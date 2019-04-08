@@ -32,6 +32,11 @@ let package = Package(
             dependencies: ["RHBFoundation"],
             path: "Sources"
         ),
+        .target(
+            name: "RHBCoreDataTestUtilities",
+            dependencies: ["RHBFoundation"],
+            path: "TestUtilities"
+        ),
         .testTarget(
             name: "RHBCoreDataTests",
             dependencies: ["RHBCoreData", "RHBFoundationTestUtilities", "RHBCoreDataTestUtilities"],
