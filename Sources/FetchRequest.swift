@@ -3,7 +3,9 @@ import RHBFoundation
 
 public class FetchRequest<T: NSManagedObject> {
     public static func fetchRequest() -> NSFetchRequest<T> {
+        // swiftlint:disable force_cast
         return T.fetchRequest() as! NSFetchRequest<T>
+        // swiftlint:enable force_cast
     }
 
     public let request = fetchRequest()

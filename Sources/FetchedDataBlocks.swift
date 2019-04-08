@@ -37,7 +37,9 @@ class FetchedResultsControllerDelegateWithBlocks<T: NSFetchRequestResult>: NSObj
     }
 
     func controller(_: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        // swiftlint:disable force_cast
         blocks.didChangeObject[type]?(anObject as! T, indexPath ?? newIndexPath!, newIndexPath ?? indexPath!)
+        // swiftlint:enable force_cast
     }
 
     func controller(_: NSFetchedResultsController<NSFetchRequestResult>, sectionIndexTitleForSectionName sectionName: String) -> String? {
