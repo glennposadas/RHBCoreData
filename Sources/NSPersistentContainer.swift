@@ -22,7 +22,7 @@ public extension NSPersistentContainer {
             .forEach { try FileManager().createDirectory(at: $0, withIntermediateDirectories: true) }
     }
 
-    func loadPersistentStoresAsync(completionQueue: DispatchQueue = .main, _ block: @escaping (Result<NSPersistentContainer, ErrorWithValue<[ErrorWithValue<NSPersistentStoreDescription>]>>) -> Void) {
+    func loadPersistentStoresAsync(completionQueue: DispatchQueue = .main, _ block: @escaping (Result<NSPersistentContainer, Error>) -> Void) {
         let group = DispatchGroup()
         persistentStoreDescriptions.forEach {
             $0.shouldAddStoreAsynchronously = true
@@ -40,7 +40,7 @@ public extension NSPersistentContainer {
                 if errors.isEmpty {
                     block(.success($0))
                 } else {
-                    block(.failure(.value(errors)))
+                    block(.failure(ErrorWithValue.value(errors)))
                 }
             }
         }
