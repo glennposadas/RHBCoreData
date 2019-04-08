@@ -14,6 +14,10 @@ let package = Package(
             name: "RHBCoreData",
             targets: ["RHBCoreData"]
         ),
+        .library(
+            name: "RHBCoreDataTestUtilities",
+            targets: ["RHBCoreDataTestUtilities"]
+        ),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -30,7 +34,7 @@ let package = Package(
         ),
         .testTarget(
             name: "RHBCoreDataTests",
-            dependencies: ["RHBCoreData", "RHBFoundationTestUtilities"],
+            dependencies: ["RHBCoreData", "RHBFoundationTestUtilities", "RHBCoreDataTestUtilities"],
             path: "Tests"
         ),
     ]
