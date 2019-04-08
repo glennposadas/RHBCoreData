@@ -9,10 +9,6 @@ public class EntityChecker {
 }
 
 public extension EntityChecker {
-    var classPropertiesByName: [String: objc_property_t] {
-        let classType = NSClassFromString(entityDescription.managedObjectClassName!)! as! NSManagedObject.Type
-        return Dictionary(uniqueKeysWithValues: classType.propertyList().map {($0.propertyName(), $0)})
-    }
     func checkEntity() {
         checkForUnmatchedProperties()
         checkIfTypeFromCoreDataAttributesMatchesTypeInClass()
@@ -42,6 +38,11 @@ extension NSManagedObject {
 }
 
 extension EntityChecker {
+    var classPropertiesByName: [String: objc_property_t] {
+        let classType = NSClassFromString(entityDescription.managedObjectClassName!)! as! NSManagedObject.Type
+        return Dictionary(uniqueKeysWithValues: classType.propertyList().map {($0.propertyName(), $0)})
+    }
+    
     func checkForUnmatchedProperties() {
         let set1 = Set(classPropertiesByName.keys)
         let set2 = Set(entityDescription.propertiesByName.keys)

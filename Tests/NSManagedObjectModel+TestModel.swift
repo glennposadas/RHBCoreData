@@ -1,7 +1,7 @@
 import CoreData
 import RHBFoundation
 
-public extension NSManagedObjectModel {
+extension NSManagedObjectModel {
     static let testModel = NSManagedObjectModel() ~ {
         $0.entities = [
             NSEntityDescription() ~ {
