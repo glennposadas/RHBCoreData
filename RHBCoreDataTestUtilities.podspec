@@ -18,5 +18,4 @@ Pod::Spec.new do |s|
     s.platforms = { :ios => "10.3", :watchos => "3.0", :tvos => "10.0", :osx => "10.12" }
     s.source_files = 'TestUtilities/**/*'
     s.frameworks = 'XCTest'
-    s.dependency 'RHBCoreData'
 end
