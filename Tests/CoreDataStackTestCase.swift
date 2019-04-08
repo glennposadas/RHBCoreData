@@ -23,10 +23,7 @@ class CoreDataStackTestCase: XCTestCase {
     }
 
     override func setUp() {
-        container = NSPersistentContainer(inMemory: .testModel)
-        container.loadPersistentStores {
-            XCTAssertNil($1)
-        }
+        container = .testContainer()
         stack = CoreDataStack(container)
     }
 

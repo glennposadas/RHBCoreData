@@ -19,4 +19,5 @@ Pod::Spec.new do |s|
     s.source_files = 'TestUtilities/**/*'
     s.frameworks = 'XCTest'
     s.dependency 'RHBFoundation'
+    s.dependency 'RHBCoreData'
 end
