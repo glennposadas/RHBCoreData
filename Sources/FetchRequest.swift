@@ -11,9 +11,9 @@ public class FetchRequest<T: NSManagedObject> {
     public init() {}
 }
 
-extension FetchRequest {
+@objc extension NSFetchRequest {
     func addsort(_ desc: NSSortDescriptor) {
-        request.sortDescriptors = (request.sortDescriptors ?? []) + [desc]
+        sortDescriptors = (sortDescriptors ?? []) + [desc]
     }
 }
 
@@ -38,10 +38,10 @@ public extension FetchRequest {
     }
 
     func addSort<V: Comparable>(by keyPath: KeyPath<T, V?>, ascending: Bool) {
-        addsort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
+        request.addsort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
     }
 
     func addSort<V: Comparable>(by keyPath: KeyPath<T, V>, ascending: Bool) {
-        addsort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
+        request.addsort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
     }
 }
