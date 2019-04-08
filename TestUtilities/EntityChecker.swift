@@ -37,6 +37,7 @@ extension NSManagedObject {
     }
 }
 
+
 extension EntityChecker {
     var classPropertiesByName: [String: objc_property_t] {
         let classType = NSClassFromString(entityDescription.managedObjectClassName!)! as! NSManagedObject.Type
@@ -57,41 +58,41 @@ extension EntityChecker {
 
     func checkIfTypeFromCoreDataMatchesTypeInClass(_ attributeDescription: NSAttributeDescription, _ typeInfoInClass: String) {
         switch attributeDescription.attributeType {
-        case .undefinedAttributeType:
-            XCTFail("Undefined type in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
-
         case .floatAttributeType:
             fallthrough
         case .integer16AttributeType:
             fallthrough
         case .integer32AttributeType:
-            XCTFail("Should use 64-bit types in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
+            XCTFail("Should use 64-bit types in entity: \(entityDescription.name!) property: \(attributeDescription.name) ")
         case .integer64AttributeType:
-            XCTAssert(typeInfoInClass.hasPrefix("Tq"), "Should use Int in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
-
+            XCTAssert(typeInfoInClass.hasPrefix("Tq"), "Should use Int in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .doubleAttributeType:
-            XCTAssert(typeInfoInClass.hasPrefix("Td"), "Should use Double in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
+            XCTAssert(typeInfoInClass.hasPrefix("Td"), "Should use Double in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .booleanAttributeType:
-            XCTAssert(typeInfoInClass.hasPrefix("TB"), "Should use Bool in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
+            XCTAssert(typeInfoInClass.hasPrefix("TB"), "Should use Bool in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .UUIDAttributeType:
-            XCTAssert(typeInfoInClass.hasPrefix("T@\"NSUUID\""), "Should use UUID in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
+            XCTAssert(typeInfoInClass.hasPrefix("T@\"NSUUID\""), "Should use UUID in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .stringAttributeType:
-            XCTAssert(typeInfoInClass.hasPrefix("T@\"NSString\""), "Should use String in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
+            XCTAssert(typeInfoInClass.hasPrefix("T@\"NSString\""), "Should use String in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .URIAttributeType:
-            XCTAssert(typeInfoInClass.hasPrefix("T@\"NSURL\""), "Should use Url in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
+            XCTAssert(typeInfoInClass.hasPrefix("T@\"NSURL\""), "Should use Url in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .dateAttributeType:
-            XCTAssert(typeInfoInClass.hasPrefix("T@\"NSDate\"") || typeInfoInClass.hasPrefix("Td") , "Should use Date or TimeInterval in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
-
+            XCTAssert(typeInfoInClass.hasPrefix("T@\"NSDate\"") || typeInfoInClass.hasPrefix("Td") , "Should use Date or TimeInterval in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .binaryDataAttributeType:
-            fallthrough
+            XCTAssert(typeInfoInClass.hasPrefix("T@\"NSData\""), "Should use Data in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .transformableAttributeType:
-            fallthrough
-        case .objectIDAttributeType:
-            fallthrough
+            let classes = ["Set", "Array", "Dictionary"]
+            let classPrefix = classes.first { attributeDescription.attributeValueClassName!.hasPrefix($0) }
+            XCTAssertNotNil(classPrefix, "Class should be one of \(classes) in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
+            XCTAssert(typeInfoInClass.hasPrefix("T@\"NS\(classPrefix!)\""), "Should use type \(classPrefix!) in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .decimalAttributeType:
-            fallthrough
+            XCTAssert(typeInfoInClass.hasPrefix("T{"), "Should use Decimal in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
+        case .objectIDAttributeType:
+            XCTFail("Object ID can not be used in core data in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
+        case .undefinedAttributeType:
+            XCTFail("Undefined type in entity: \(entityDescription.name!) property: \(attributeDescription.name)")
         @unknown default:
-            XCTFail("New type needs testing in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in coredata: \(attributeDescription.attributeValueClassName!) type in class: \(typeInfoInClass)")
+            XCTFail("New type needs testing in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in coredata: \(attributeDescription.attributeValueClassName!)")
         }
     }
 
