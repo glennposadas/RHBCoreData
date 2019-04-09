@@ -1,5 +1,4 @@
 import CoreData
-import RHBFoundation
 
 public extension NSPersistentContainer {
     convenience init(inMemory model: NSManagedObjectModel) {
