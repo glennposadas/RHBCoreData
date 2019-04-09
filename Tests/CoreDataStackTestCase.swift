@@ -299,4 +299,30 @@ class CoreDataStackTestCase: XCTestCase {
 
         waitForExpectations(timeout: 1, handler: nil)
     }
+
+    func testSelfInBackground() {
+        let ex = expectation(description: "Refetch test")
+        stack.readingContext.performTask { context in
+            let fetchRequest = FetchRequestBuilder(sortBy: \TestEntity.id, ascending: true).request
+            let cont = context.createFetchedResultsController(request: fetchRequest)
+            try! cont.performFetch()
+            let data = FetchedData(cont)
+            data.blocks.didChange = {
+                ex.fulfill()
+                XCTAssertNotNil(data.controller.fetchedObjects, "Just to retain data")
+            }
+            data.blocks.didChangeObject[.insert] = { ent, _, _ in
+                self.stack.writingContext.performTask { writingContext in
+                    let ent1 = try! writingContext.refetch([ent]).first!
+                    XCTAssert(ent.objectID == ent1.objectID)
+                }
+            }
+            self.stack.writingContext.performTask { context in
+                let ent = TestEntity(context: context)
+                ent.id = UUID().uuidString
+                try! context.saveChanges()
+            }
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
 }
