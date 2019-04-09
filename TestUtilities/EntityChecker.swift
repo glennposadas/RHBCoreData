@@ -10,6 +10,7 @@ public class EntityChecker {
 
 public extension EntityChecker {
     func checkEntity() {
+        XCTAssert(Int.bitWidth == 64)
         checkForUnmatchedProperties()
         checkIfTypeFromCoreDataAttributesMatchesTypeInClass()
     }
