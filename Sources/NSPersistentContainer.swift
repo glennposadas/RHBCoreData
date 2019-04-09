@@ -12,7 +12,11 @@ public extension NSPersistentContainer {
     }
 
     func destroyPersistentStores() throws {
-        try persistentStoreDescriptions.forEach { try persistentStoreCoordinator.destroyPersistentStore(description: $0) }
+        try persistentStoreCoordinator.destroyPersistentStores(descriptions: persistentStoreDescriptions)
+    }
+
+    func removeStores() throws {
+        try persistentStoreCoordinator.removeStores()
     }
 
     func createPersistentStoreDirectories() throws {
@@ -22,6 +26,9 @@ public extension NSPersistentContainer {
     }
 
     func loadPersistentStoresSync() throws {
+        persistentStoreDescriptions.forEach {
+            $0.shouldAddStoreAsynchronously = false
+        }
         var error: Error?
         loadPersistentStores {
             $1.map {
