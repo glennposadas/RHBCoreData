@@ -18,18 +18,6 @@ extension NSManagedObjectModel {
                         $0.name = #keyPath(TestEntity.text)
                         $0.attributeType = .stringAttributeType
                     },
-                    NSAttributeDescription() ~ {
-                        $0.defaultValue = 0
-                        $0.isOptional = false
-                        $0.name = #keyPath(TestEntity.deca)
-                        $0.attributeType = .decimalAttributeType
-                    },
-                    NSAttributeDescription() ~ {
-                        $0.defaultValue = false
-                        $0.isOptional = false
-                        $0.name = #keyPath(TestEntity.flag)
-                        $0.attributeType = .booleanAttributeType
-                    },
                 ]
             },
         ]

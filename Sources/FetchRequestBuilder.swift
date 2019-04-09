@@ -3,13 +3,6 @@ import RHBFoundation
 
 public class FetchRequestBuilder<T: NSManagedObject> {
     public let request = FetchRequest<T>.request
-    public init() {}
-}
-
-@objc extension NSFetchRequest {
-    func addsort(_ desc: NSSortDescriptor) {
-        sortDescriptors = (sortDescriptors ?? []) + [desc]
-    }
 }
 
 public extension FetchRequestBuilder {
@@ -38,5 +31,13 @@ public extension FetchRequestBuilder {
 
     func addSort<V: Comparable>(by keyPath: KeyPath<T, V>, ascending: Bool) {
         request.addsort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
+    }
+}
+
+// MARK: - internal
+
+@objc extension NSFetchRequest {
+    func addsort(_ desc: NSSortDescriptor) {
+        sortDescriptors = (sortDescriptors ?? []) + [desc]
     }
 }

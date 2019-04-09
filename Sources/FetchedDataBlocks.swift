@@ -21,6 +21,8 @@ public class FetchedDataBlocks<T: NSFetchRequestResult> {
     }
 }
 
+// MARK: - internal
+
 class FetchedResultsControllerDelegateWithBlocks<T: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate {
     weak var blocks: FetchedDataBlocks<T>!
 
