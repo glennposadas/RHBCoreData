@@ -23,7 +23,7 @@ class CoreDataStackTestCase: XCTestCase {
     }
 
     override func setUp() {
-        container = .testContainer()
+        container = .testContainerByLoadingTestModelInMemory()
         stack = CoreDataStack(container)
     }
 
