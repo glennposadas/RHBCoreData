@@ -95,10 +95,12 @@ class CoreDataStackTestCase: XCTestCase {
     func testCoreDataAsyncOk() {
         let ex = expectation(description: #function)
         try! container.persistentStoreCoordinator.removeStores()
-        container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: NSPersistentContainer.defaultDirectoryURL().appendingPathComponent(#function)))
-        XCTAssert(container.persistentStoreDescriptions.count == 2)
-        container.loadPersistentStoresAsync { result in
-            XCTAssert(try! result.get() == self.container)
+        container.persistentStoreDescriptions.first.map {
+            $0.url = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent(#function)
+            $0.type = NSSQLiteStoreType
+        }
+        container.loadPersistentStoresAsync { error in
+            XCTAssertNil(error)
             ex.fulfill()
         }
         waitForExpectations(timeout: 1, handler: nil)
@@ -107,14 +109,13 @@ class CoreDataStackTestCase: XCTestCase {
     func testCoreDataAsyncErrors() {
         let ex = expectation(description: #function)
         try! container.persistentStoreCoordinator.removeStores()
-        container.persistentStoreDescriptions.append(NSPersistentStoreDescription(url: URL(fileURLWithPath: "/verybadpath/xxx1.sqlite")))
-        XCTAssert(container.persistentStoreDescriptions.count == 2)
-        container.loadPersistentStoresAsync { result in
-            do {
-                _ = try result.get()
-            } catch {
-                ex.fulfill()
-            }
+        container.persistentStoreDescriptions.first.map {
+            $0.url = URL(fileURLWithPath: "")
+            $0.type = NSSQLiteStoreType
+        }
+        container.loadPersistentStoresAsync { error in
+            XCTAssertNotNil(error)
+            ex.fulfill()
         }
         waitForExpectations(timeout: 1, handler: nil)
     }

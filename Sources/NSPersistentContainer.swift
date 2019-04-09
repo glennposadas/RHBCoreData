@@ -22,27 +22,27 @@ public extension NSPersistentContainer {
             .forEach { try FileManager().createDirectory(at: $0, withIntermediateDirectories: true) }
     }
 
-    func loadPersistentStoresAsync(completionQueue: DispatchQueue = .main, _ block: @escaping (Result<NSPersistentContainer, Error>) -> Void) {
-        let group = DispatchGroup()
+    func loadPersistentStoresSync() throws {
+        persistentStoreDescriptions.forEach {
+            $0.shouldAddStoreAsynchronously = false
+        }
+        var error: Error?
+        loadPersistentStores {
+            $1.map {
+                error = $0
+            }
+        }
+        try error.map {
+            throw $0
+        }
+    }
+
+    func loadPersistentStoresAsync(_ block: @escaping (Error?) -> Void) {
         persistentStoreDescriptions.forEach {
             $0.shouldAddStoreAsynchronously = true
-            group.enter()
         }
-        var errors: [ErrorWithValue<NSPersistentStoreDescription>] = []
-        loadPersistentStores { storeDescription, error in
-            error.map {
-                errors.append(.valueAnderror(storeDescription, $0))
-            }
-            group.leave()
-        }
-        group.notify(queue: completionQueue) { [weak self] in
-            self.map {
-                if errors.isEmpty {
-                    block(.success($0))
-                } else {
-                    block(.failure(ErrorWithValue.value(errors)))
-                }
-            }
+        loadPersistentStores {
+            block($1)
         }
     }
 }
