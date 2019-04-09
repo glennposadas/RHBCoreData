@@ -34,10 +34,12 @@ public extension BackgroundManagedObjectContext {
         performTask { context in
             context.reset()
             defer { context.reset() }
-            resultBlock(Result { try taskBlock(context) }.mapThrowable {
-                try context.saveChanges()
-                return $0
-            })
+            resultBlock(Result { try taskBlock(context) }
+                .mapThrowable {
+                    try context.saveChanges()
+                    return $0
+                }
+            )
         }
     }
 
