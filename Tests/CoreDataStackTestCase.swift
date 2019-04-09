@@ -79,16 +79,15 @@ class CoreDataStackTestCase: XCTestCase {
 
     func testCoredataDeinit() {
         var counter = 0
-        let N = 50
+        let N = 200
         (0 ..< N).forEach { _ in
             stack.writingContext.performTask { context in
                 counter += 1
                 try! context.save()
             }
         }
-        let cont = stack.persistentContainer
         stack = nil
-        try! cont.removeStores()
+        try! container.removeStores()
         XCTAssert(counter < N)
     }
 
@@ -96,7 +95,7 @@ class CoreDataStackTestCase: XCTestCase {
         let ex = expectation(description: #function)
         try! container.removeStores()
         container.persistentStoreDescriptions.first.map {
-            $0.url = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent(#function)
+            $0.url = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent(UUID().uuidString)
             $0.type = NSSQLiteStoreType
         }
         container.loadPersistentStoresAsync { error in
