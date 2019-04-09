@@ -12,7 +12,7 @@ public extension NSPersistentContainer {
     }
 
     func destroyPersistentStores() throws {
-        try persistentStoreCoordinator.destroyPersistentStores(descriptions: persistentStoreDescriptions)
+        try persistentStoreCoordinator.destroyPersistentStores(persistentStoreDescriptions)
     }
 
     func removeStores() throws {

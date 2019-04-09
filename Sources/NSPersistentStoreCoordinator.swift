@@ -1,7 +1,7 @@
 import CoreData
 
-public extension NSPersistentStoreCoordinator {
-    func destroyPersistentStores(descriptions: [NSPersistentStoreDescription]) throws {
+extension NSPersistentStoreCoordinator {
+    func destroyPersistentStores(_ descriptions: [NSPersistentStoreDescription]) throws {
         try descriptions.forEach {
             guard let url = $0.url else {
                 return

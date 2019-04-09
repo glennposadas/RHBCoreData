@@ -86,15 +86,15 @@ class CoreDataStackTestCase: XCTestCase {
                 try! context.save()
             }
         }
-        let coord = stack.persistentContainer.persistentStoreCoordinator
+        let cont = stack.persistentContainer
         stack = nil
-        try! coord.removeStores()
+        try! cont.removeStores()
         XCTAssert(counter < N)
     }
 
     func testCoreDataAsyncOk() {
         let ex = expectation(description: #function)
-        try! container.persistentStoreCoordinator.removeStores()
+        try! container.removeStores()
         container.persistentStoreDescriptions.first.map {
             $0.url = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent(#function)
             $0.type = NSSQLiteStoreType
@@ -108,7 +108,7 @@ class CoreDataStackTestCase: XCTestCase {
 
     func testCoreDataAsyncErrors() {
         let ex = expectation(description: #function)
-        try! container.persistentStoreCoordinator.removeStores()
+        try! container.removeStores()
         container.persistentStoreDescriptions.first.map {
             $0.url = URL(fileURLWithPath: "")
             $0.type = NSSQLiteStoreType
