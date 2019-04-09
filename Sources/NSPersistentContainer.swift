@@ -23,9 +23,6 @@ public extension NSPersistentContainer {
     }
 
     func loadPersistentStoresSync() throws {
-        persistentStoreDescriptions.forEach {
-            $0.shouldAddStoreAsynchronously = false
-        }
         var error: Error?
         loadPersistentStores {
             $1.map {
