@@ -69,7 +69,14 @@ extension EntityChecker {
         case .doubleAttributeType:
             XCTAssert(typeInfoInClass.hasPrefix("Td"), "Should use Double in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .booleanAttributeType:
-            XCTAssert(typeInfoInClass.hasPrefix("TB"), "Should use Bool in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
+            let boolPrefix: String = {
+                #if os(macOS)
+                return "Tc"
+                #else
+                return "TB"
+                #endif
+            }()
+            XCTAssert(typeInfoInClass.hasPrefix(boolPrefix), "Should use Bool in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .UUIDAttributeType:
             XCTAssert(typeInfoInClass.hasPrefix("T@\"NSUUID\""), "Should use UUID in entity: \(entityDescription.name!) property: \(attributeDescription.name) type in class: \(typeInfoInClass)")
         case .stringAttributeType:
