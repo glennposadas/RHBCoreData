@@ -1,9 +1,9 @@
 import CoreData
 import RHBFoundation
 
-public enum FetchRequest<T: NSManagedObject> {}
+public enum FetchRequestWrapper<T: NSManagedObject> {}
 
-public extension FetchRequest {
+public extension FetchRequestWrapper {
     static var request: NSFetchRequest<T> {
         // swiftlint:disable force_cast
         return T.fetchRequest() as! NSFetchRequest<T>
@@ -11,11 +11,11 @@ public extension FetchRequest {
     }
 }
 
-public class FetchRequestBuilder<T: NSManagedObject> {
-    public let request = FetchRequest<T>.request
+public class FetchRequest<T: NSManagedObject> {
+    public let request = FetchRequestWrapper<T>.request
 }
 
-public extension FetchRequestBuilder {
+public extension FetchRequest {
     convenience init<P: NSPredicate & TypedPredicateProtocol>(predicate: P) where P.Root == T {
         self.init()
         self.request.predicate = predicate

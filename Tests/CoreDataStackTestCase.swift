@@ -54,14 +54,14 @@ class CoreDataStackTestCase: XCTestCase {
         }
 
         stack.writingContext.write(errorBlock: errorBlock) { context in
-            let fetchRequest = FetchRequestBuilder(predicate: \TestEntity.id == #function).request
+            let fetchRequest = FetchRequest(predicate: \TestEntity.id == #function).request
             let testEntity = try! context.fetch(fetchRequest).first!
             XCTAssert(testEntity.id == #function)
             testEntity.id = nil
         }
 
         stack.writingContext.write(errorBlock: errorBlock) { context in
-            let fetchRequest = FetchRequestBuilder(predicate: \TestEntity.id == nil).request
+            let fetchRequest = FetchRequest(predicate: \TestEntity.id == nil).request
             let testEntity = try! context.fetch(fetchRequest).first!
             XCTAssert(testEntity.id == nil)
             testEntity.deleteFromManagedObjectContext()
@@ -121,7 +121,7 @@ class CoreDataStackTestCase: XCTestCase {
 
     func testBackgroundFetchedActionsInsert() {
         let ex = expectation(description: #function)
-        let fetchRequest = FetchRequestBuilder(sortBy: \TestEntity.id, ascending: true).request
+        let fetchRequest = FetchRequest(sortBy: \TestEntity.id, ascending: true).request
         var data: FetchedData<TestEntity>!
         stack.readingContext.performTask { context in
             let cont = context.createFetchedResultsController(request: fetchRequest)
@@ -166,7 +166,7 @@ class CoreDataStackTestCase: XCTestCase {
     }
 
     func testFetchedData() {
-        let fetchRequest = FetchRequestBuilder(sortBy: \TestEntity.id, ascending: true).request
+        let fetchRequest = FetchRequest(sortBy: \TestEntity.id, ascending: true).request
         let controller = stack.mainContext.createFetchedResultsController(request: fetchRequest)
         try! controller.performFetch()
         let fetchedData = FetchedData(controller)
@@ -303,7 +303,7 @@ class CoreDataStackTestCase: XCTestCase {
     func testSelfInBackground() {
         let ex = expectation(description: "Refetch test")
         stack.readingContext.performTask { context in
-            let fetchRequest = FetchRequestBuilder(sortBy: \TestEntity.id, ascending: true).request
+            let fetchRequest = FetchRequest(sortBy: \TestEntity.id, ascending: true).request
             let cont = context.createFetchedResultsController(request: fetchRequest)
             try! cont.performFetch()
             let data = FetchedData(cont)

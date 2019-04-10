@@ -10,7 +10,7 @@ public extension NSManagedObjectContext {
     }
 
     func refetch<S: Sequence>(_ sequence: S) throws -> [S.Element] where S.Element: NSManagedObject {
-        let request = FetchRequestBuilder(predicate: \S.Element.self === sequence).request
+        let request = FetchRequest(predicate: \S.Element.self === sequence).request
         return try fetch(request)
     }
 
