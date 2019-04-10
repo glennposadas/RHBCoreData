@@ -69,7 +69,7 @@ class CoreDataStackTestCase: XCTestCase {
 
         let ex = expectation(description: #function)
         stack.writingContext.write(errorBlock: errorBlock) { context in
-            let fetchRequest = FetchRequest<TestEntity>.request
+            let fetchRequest = FetchRequestWrapper<TestEntity>.request
             XCTAssert(try! context.fetch(fetchRequest).isEmpty)
             ex.fulfill()
         }
@@ -272,7 +272,7 @@ class CoreDataStackTestCase: XCTestCase {
         }
 
         DispatchQueue.global().async {
-            let fr2 = FetchRequest<TestEntity>.request
+            let fr2 = FetchRequestWrapper<TestEntity>.request
             fr2.predicate = {
                 let ex1 = NSExpression(forKeyPath: \TestEntity.self)
                 let ex2 = NSExpression(forConstantValue: [ent])
@@ -280,7 +280,7 @@ class CoreDataStackTestCase: XCTestCase {
             }()
             fr2.returnsObjectsAsFaults = true
 
-            let fr1 = FetchRequest<TestEntity>.request
+            let fr1 = FetchRequestWrapper<TestEntity>.request
             fr1.predicate = {
                 let ex1 = NSExpression(format: "self")
                 let ex2 = NSExpression(forConstantValue: [ent])
