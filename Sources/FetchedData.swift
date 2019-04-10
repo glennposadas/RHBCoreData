@@ -18,6 +18,6 @@ public extension FetchedData {
         return controller.sections ?? []
     }
     var numberOfObjects: Int {
-        return sections.reduce(0) { $0 + $1.numberOfObjects }
+        return sections.map { $0.numberOfObjects }.reduce(0, +)
     }
 }
