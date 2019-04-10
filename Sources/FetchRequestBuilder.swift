@@ -21,7 +21,7 @@ public extension FetchRequestBuilder {
         addSort(by: keyPath, ascending: ascending)
     }
 
-    func predicate<P: NSPredicate & TypedPredicateProtocol>(_ p: P?) where P.Root == T {
+    func predicate<P: NSPredicate & TypedPredicateProtocol>(_ p: P) where P.Root == T {
         request.predicate = p
     }
 
