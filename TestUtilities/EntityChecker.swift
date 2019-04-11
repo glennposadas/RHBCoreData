@@ -1,5 +1,6 @@
 import XCTest
 import CoreData
+import RHBFoundation
 
 // MARK: - Public
 
@@ -22,54 +23,38 @@ public extension EntityChecker {
 
 @objcMembers
 class DummyTypes: NSObject {
-    let bool = Bool(true)
-    let decimal = Decimal(0)
-    let int = Int(0)
-    let double = Double(0)
-    let url = URL(fileURLWithPath: "")
-    let uuid = UUID()
-    let date = Date()
-    let string = String()
-    let timeinterval = TimeInterval()
-    let data = Data()
-    let set = Set<NSObject>()
-    let array = Array<NSObject>()
-    let dictionary = Dictionary<NSObject, NSObject>()
+    @NSManaged var bool: Bool
+    @NSManaged var decimal: Decimal
+    @NSManaged var int: Int
+    @NSManaged var double: Double
+    @NSManaged var url: URL
+    @NSManaged var uuid: UUID
+    @NSManaged var date: Date
+    @NSManaged var string: String
+    @NSManaged var timeinterval: TimeInterval
+    @NSManaged var data: Data
+    @NSManaged var orderedset: NSOrderedSet
+    @NSManaged var set: Set<NSObject>
+    @NSManaged var array: Array<NSObject>
+    @NSManaged var dictionary: Dictionary<NSObject, NSObject>
 }
 
 extension DummyTypes {
-    static let typesByName: [String: String] = Dictionary(uniqueKeysWithValues: rawPropertyList().map {($0.propertyName(), $0.typeInfo())})
+    static let typesByName: [String: String] = Dictionary(uniqueKeysWithValues: objc_property_t.propertyList(DummyTypes.self).map {($0.propertyName(), $0.typeInfo())})
     static func matchType(name: String, info: String) -> Bool {
         let myInfo = typesByName[name]!
         return myInfo.split(separator: ",")[0] == info.split(separator: ",")[0]
     }
 }
 
-extension objc_property_t {
-    func typeInfo() -> String {
-        return NSString(utf8String: property_getAttributes(self)!)! as String
-    }
-    func propertyName() -> String {
-        return NSString(utf8String: property_getName(self))! as String
-    }
-}
 
-extension NSObject {
-    static func rawPropertyList() -> [objc_property_t] {
-        var count32 = UInt32()
-        guard let classPropertyList = class_copyPropertyList(self, &count32) else {
-            return []
-        }
-        return (0..<Int(count32)).map { classPropertyList[$0] }
-    }
-}
 
 extension NSManagedObject {
     static func propertyList() -> [objc_property_t] {
         guard  self != NSManagedObject.self else {
             return []
         }
-        return rawPropertyList() + (superclass() as! NSManagedObject.Type).propertyList()
+        return objc_property_t.propertyList(self) + (superclass() as! NSManagedObject.Type).propertyList()
     }
 }
 
