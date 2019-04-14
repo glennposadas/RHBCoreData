@@ -47,8 +47,6 @@ extension DummyTypes {
     }
 }
 
-
-
 extension NSManagedObject {
     static func propertyList() -> [objc_property_t] {
         guard  self != NSManagedObject.self else {
@@ -121,6 +119,14 @@ extension EntityChecker {
                 checkValueTypeNotOptional(attributeDescription, propertyTypeInfo)
                 checkIfTypeFromCoreDataMatchesTypeInClass(attributeDescription, propertyTypeInfo)
             }
+        }
+    }
+}
+
+public extension NSManagedObjectModel {
+    func chechEntities() {
+        entities.forEach {
+            EntityChecker(entityDescription: $0).checkEntity()
         }
     }
 }
