@@ -1,7 +1,7 @@
 import CoreData
 import RHBFoundation
 
-public class FetchRequestBuilder<T: NSManagedObject> {
+public final class FetchRequestBuilder<T: NSManagedObject> {
     public let request = FetchRequest<T>.request
 }
 

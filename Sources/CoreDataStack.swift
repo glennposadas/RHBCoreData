@@ -1,6 +1,6 @@
 import CoreData
 
-open class CoreDataStack {
+public final class CoreDataStack {
     public let persistentContainer: NSPersistentContainer
 
     public init(_ persistentContainer: NSPersistentContainer) {

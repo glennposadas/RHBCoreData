@@ -1,6 +1,6 @@
 import CoreData
 
-public class FetchedData<T: NSFetchRequestResult> {
+public final class FetchedData<T: NSFetchRequestResult> {
     public let controller: NSFetchedResultsController<T>
     public let blocks: FetchedDataBlocks<T>
 

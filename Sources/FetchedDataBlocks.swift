@@ -1,6 +1,6 @@
 import CoreData
 
-public class FetchedDataBlocks<T: NSFetchRequestResult> {
+public final class FetchedDataBlocks<T: NSFetchRequestResult> {
     public var didChangeObject: [NSFetchedResultsChangeType: (T, IndexPath, IndexPath) -> Void] = [:]
     public var didChangeSection: [NSFetchedResultsChangeType: (NSFetchedResultsSectionInfo, Int) -> Void] = [:]
     public var willChange: (() -> Void)?
@@ -23,7 +23,7 @@ public class FetchedDataBlocks<T: NSFetchRequestResult> {
 
 // MARK: - internal
 
-class FetchedResultsControllerDelegateWithBlocks<T: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate {
+final class FetchedResultsControllerDelegateWithBlocks<T: NSFetchRequestResult>: NSObject, NSFetchedResultsControllerDelegate {
     weak var blocks: FetchedDataBlocks<T>!
 
     init(_ blocks: FetchedDataBlocks<T>) {

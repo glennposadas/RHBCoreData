@@ -1,6 +1,6 @@
 import CoreData
 
-open class BackgroundManagedObjectContext {
+public final class BackgroundManagedObjectContext {
     var context: NSManagedObjectContext?
 
     public init(_ context: NSManagedObjectContext) {
