@@ -49,7 +49,7 @@ extension DummyTypes {
 
 extension NSManagedObject {
     static func propertyList() -> [objc_property_t] {
-        guard  self != NSManagedObject.self else {
+        guard self != NSManagedObject.self else {
             return []
         }
         return objc_property_t.propertyList(self) + (superclass() as! NSManagedObject.Type).propertyList()
