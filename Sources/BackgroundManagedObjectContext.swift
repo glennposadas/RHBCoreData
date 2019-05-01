@@ -1,7 +1,7 @@
 import CoreData
 
 public final class BackgroundManagedObjectContext {
-    var context: NSManagedObjectContext?
+    public private(set) var context: NSManagedObjectContext?
 
     public init(_ context: NSManagedObjectContext) {
         self.context = context
