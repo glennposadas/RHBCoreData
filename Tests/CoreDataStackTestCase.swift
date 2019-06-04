@@ -80,7 +80,7 @@ class CoreDataStackTestCase: XCTestCase {
     func testCoredataDeinit() {
         var counter = 0
         let N = 200
-        (0 ..< N).forEach { _ in
+        (0..<N).forEach { _ in
             stack.writingContext.performTask { context in
                 counter += 1
                 try! context.save()
@@ -146,7 +146,7 @@ class CoreDataStackTestCase: XCTestCase {
 
     func testFulfiller() {
         let N = 10
-        (0 ..< N * 2).forEach { index in
+        (0..<N * 2).forEach { index in
             let ful = expectation(description: "\(#function) \(index)").fulfiller
             if index.isMultiple(of: 2) {
                 return
