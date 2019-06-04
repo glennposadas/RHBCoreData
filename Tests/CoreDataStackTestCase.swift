@@ -257,6 +257,7 @@ class CoreDataStackTestCase: XCTestCase {
 
     func testSelfIn() {
         let ex = expectation(description: #function)
+        let ex2 = expectation(description: "2")
 
         var ent: TestEntity!
 
@@ -267,8 +268,9 @@ class CoreDataStackTestCase: XCTestCase {
             }
         }
 
-        DispatchQueue.global().sync {
-            XCTAssertNotNil(self.container.newBackgroundContext().existing(ent))
+        container.performBackgroundTask { context in
+            XCTAssertNotNil(context.existing(ent))
+            ex2.fulfill()
         }
 
         DispatchQueue.global().async {
