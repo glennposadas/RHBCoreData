@@ -17,9 +17,9 @@ extension NSManagedObjectModel {
                         $0.isOptional = true
                         $0.name = #keyPath(TestEntity.text)
                         $0.attributeType = .stringAttributeType
-                    },
+                    }
                 ]
-            },
+            }
         ]
     }
 }

@@ -12,7 +12,7 @@ public final class FetchedDataBlocks<T: NSFetchRequestResult> {
 
     init(_ controller: NSFetchedResultsController<T>) {
         self.controller = controller
-        self.delegate = FetchedResultsControllerDelegateWithBlocks(self)
+        delegate = FetchedResultsControllerDelegateWithBlocks(self)
         controller.delegate = delegate
     }
 

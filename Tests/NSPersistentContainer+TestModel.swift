@@ -1,7 +1,7 @@
 import CoreData
-import XCTest
-import RHBFoundation
 import RHBCoreData
+import RHBFoundation
+import XCTest
 
 extension NSPersistentContainer {
     static func testContainerByLoadingTestModelInMemory() -> NSPersistentContainer {

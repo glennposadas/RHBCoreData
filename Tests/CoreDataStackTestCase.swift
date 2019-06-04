@@ -1,8 +1,8 @@
 import CoreData
 import RHBCoreData
+import RHBCoreDataTestUtilities
 import RHBFoundation
 import RHBFoundationTestUtilities
-import RHBCoreDataTestUtilities
 import XCTest
 
 extension CoreDataStack {
@@ -50,7 +50,7 @@ class CoreDataStackTestCase: XCTestCase {
         }
 
         stack.createTestEntity(id: #function) { result in
-            _=try! result.get()
+            _ = try! result.get()
         }
 
         stack.writingContext.write(errorBlock: errorBlock) { context in
@@ -260,7 +260,7 @@ class CoreDataStackTestCase: XCTestCase {
 
         var ent: TestEntity!
 
-        self.container.newBackgroundContext() ~ { context in
+        container.newBackgroundContext() ~ { context in
             context.performAndWait {
                 ent = TestEntity(context: context)
                 try! context.save()

@@ -1,6 +1,6 @@
-import XCTest
 import CoreData
 import RHBFoundation
+import XCTest
 
 // MARK: - Public
 
@@ -35,12 +35,12 @@ class DummyTypes: NSObject {
     @NSManaged var data: Data
     @NSManaged var orderedset: NSOrderedSet
     @NSManaged var set: Set<NSObject>
-    @NSManaged var array: Array<NSObject>
-    @NSManaged var dictionary: Dictionary<NSObject, NSObject>
+    @NSManaged var array: [NSObject]
+    @NSManaged var dictionary: [NSObject: NSObject]
 }
 
 extension DummyTypes {
-    static let typesByName: [String: String] = Dictionary(uniqueKeysWithValues: objc_property_t.propertyList(DummyTypes.self).map {($0.propertyName(), $0.typeInfo())})
+    static let typesByName: [String: String] = Dictionary(uniqueKeysWithValues: objc_property_t.propertyList(DummyTypes.self).map { ($0.propertyName(), $0.typeInfo()) })
     static func matchType(name: String, info: String) -> Bool {
         let myInfo = typesByName[name]!
         return myInfo.split(separator: ",")[0] == info.split(separator: ",")[0]
@@ -56,13 +56,12 @@ extension NSManagedObject {
     }
 }
 
-
 extension EntityChecker {
     var classPropertiesByName: [String: objc_property_t] {
         let classType = NSClassFromString(entityDescription.managedObjectClassName!)! as! NSManagedObject.Type
-        return Dictionary(uniqueKeysWithValues: classType.propertyList().map {($0.propertyName(), $0)})
+        return Dictionary(uniqueKeysWithValues: classType.propertyList().map { ($0.propertyName(), $0) })
     }
-    
+
     func checkForUnmatchedProperties() {
         let set1 = Set(classPropertiesByName.keys)
         let set2 = Set(entityDescription.propertiesByName.keys)

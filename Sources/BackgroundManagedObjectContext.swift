@@ -48,11 +48,9 @@ public extension BackgroundManagedObjectContext {
             do {
                 try result.get()
                 errorBlock(nil)
-            }
-            catch {
+            } catch {
                 errorBlock(error)
             }
         }, taskBlock)
     }
 }
-
