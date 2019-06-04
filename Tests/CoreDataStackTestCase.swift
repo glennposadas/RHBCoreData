@@ -135,7 +135,7 @@ class CoreDataStackTestCase: XCTestCase {
                 XCTAssert(ent.id == #function)
             }
             self.stack.writingContext.performTask { context in
-                context.createObject() { (testEntity: TestEntity) in
+                context.createObject { (testEntity: TestEntity) in
                     testEntity.id = #function
                 }
                 try! context.saveChanges()
