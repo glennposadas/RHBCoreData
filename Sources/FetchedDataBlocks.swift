@@ -8,12 +8,12 @@ public final class FetchedDataBlocks<T: NSFetchRequestResult> {
     public var sectionIndexTitle: ((String) -> String?)?
 
     weak var controller: NSFetchedResultsController<T>?
-    var delegate: FetchedResultsControllerDelegateWithBlocks<T>!
+    var delegateWithBlocks: FetchedResultsControllerDelegateWithBlocks<T>!
 
     init(_ controller: NSFetchedResultsController<T>) {
         self.controller = controller
-        delegate = FetchedResultsControllerDelegateWithBlocks(self)
-        controller.delegate = delegate
+        delegateWithBlocks = FetchedResultsControllerDelegateWithBlocks(self)
+        controller.delegate = delegateWithBlocks
     }
 
     deinit {
