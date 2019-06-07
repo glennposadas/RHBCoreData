@@ -38,6 +38,7 @@ public extension FetchRequestBuilder {
 }
 
 // MARK: - internal
+
 @objc extension NSFetchRequest {
     func addSort(_ descriptor: NSSortDescriptor) {
         sortDescriptors = (sortDescriptors ?? []) + [descriptor]
