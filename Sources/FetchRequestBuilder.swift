@@ -9,7 +9,7 @@ public final class FetchRequestBuilder<T: NSManagedObject> {
 }
 
 public extension FetchRequestBuilder {
-    convenience init<P: NSPredicate & TypedPredicateProtocol>(predicate: P) where P.Root == T {
+    convenience init<P: TypedPredicateProtocol>(predicate: P) where P.Root == T {
         self.init()
         request.predicate = predicate
     }
