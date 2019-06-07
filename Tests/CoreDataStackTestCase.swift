@@ -8,7 +8,7 @@ import XCTest
 extension CoreDataStack {
     func createTestEntity(id: String, _ block: @escaping (Result<TestEntity, Error>) -> Void) {
         writingContext.write(resultBlock: block) { context in
-            context.createObject {
+            context.makeObject {
                 $0.id = id
             }
         }
@@ -124,7 +124,7 @@ class CoreDataStackTestCase: XCTestCase {
         let fetchRequest = FetchRequestBuilder(sortBy: \TestEntity.id, ascending: true).request
         var data: FetchedData<TestEntity>!
         stack.readingContext.performTask { context in
-            let cont = context.createFetchedResultsController(request: fetchRequest)
+            let cont = context.makeFetchedResultsController(request: fetchRequest)
             try! cont.performFetch()
             data = FetchedData(cont)
             data.blocks.didChange = {
@@ -135,7 +135,7 @@ class CoreDataStackTestCase: XCTestCase {
                 XCTAssert(ent.id == #function)
             }
             self.stack.writingContext.performTask { context in
-                context.createObject { (testEntity: TestEntity) in
+                context.makeObject { (testEntity: TestEntity) in
                     testEntity.id = #function
                 }
                 try! context.saveChanges()
@@ -152,7 +152,7 @@ class CoreDataStackTestCase: XCTestCase {
                 return
             }
             stack.writingContext.performTask { context in
-                context.createObject { (obj: TestEntity) in
+                context.makeObject { (obj: TestEntity) in
                     obj.id = #function
                 }
                 try! context.save()
@@ -167,7 +167,7 @@ class CoreDataStackTestCase: XCTestCase {
 
     func testFetchedData() {
         let fetchRequest = FetchRequestBuilder(sortBy: \TestEntity.id, ascending: true).request
-        let controller = stack.mainContext.createFetchedResultsController(request: fetchRequest)
+        let controller = stack.mainContext.makeFetchedResultsController(request: fetchRequest)
         try! controller.performFetch()
         let fetchedData = FetchedData(controller)
 
@@ -306,7 +306,7 @@ class CoreDataStackTestCase: XCTestCase {
         let ex = expectation(description: "Refetch test")
         stack.readingContext.performTask { context in
             let fetchRequest = FetchRequestBuilder(sortBy: \TestEntity.id, ascending: true).request
-            let cont = context.createFetchedResultsController(request: fetchRequest)
+            let cont = context.makeFetchedResultsController(request: fetchRequest)
             try! cont.performFetch()
             let data = FetchedData(cont)
             data.blocks.didChange = {

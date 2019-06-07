@@ -26,21 +26,20 @@ public extension FetchRequestBuilder {
 
     @discardableResult
     func addSort<V: Comparable>(by keyPath: KeyPath<T, V?>, ascending: Bool) -> Self {
-        request.addsort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
+        request.addSort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
         return self
     }
 
     @discardableResult
     func addSort<V: Comparable>(by keyPath: KeyPath<T, V>, ascending: Bool) -> Self {
-        request.addsort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
+        request.addSort(NSSortDescriptor(keyPath: keyPath, ascending: ascending))
         return self
     }
 }
 
 // MARK: - internal
-
 @objc extension NSFetchRequest {
-    func addsort(_ desc: NSSortDescriptor) {
-        sortDescriptors = (sortDescriptors ?? []) + [desc]
+    func addSort(_ descriptor: NSSortDescriptor) {
+        sortDescriptors = (sortDescriptors ?? []) + [descriptor]
     }
 }

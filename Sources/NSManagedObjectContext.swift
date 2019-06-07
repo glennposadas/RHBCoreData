@@ -18,12 +18,12 @@ public extension NSManagedObjectContext {
         return try? existingObject(with: object.objectID) as? T
     }
 
-    func createFetchedResultsController<T: NSFetchRequestResult>(request: NSFetchRequest<T>, sectionNameKeyPath: String? = nil, cacheName: String? = nil) -> NSFetchedResultsController<T> {
+    func makeFetchedResultsController<T: NSFetchRequestResult>(request: NSFetchRequest<T>, sectionNameKeyPath: String? = nil, cacheName: String? = nil) -> NSFetchedResultsController<T> {
         return NSFetchedResultsController(fetchRequest: request, managedObjectContext: self, sectionNameKeyPath: sectionNameKeyPath, cacheName: cacheName)
     }
 
     @discardableResult
-    func createObject<T: NSManagedObject>(_ initialize: (T) -> Void = { _ in }) -> T {
+    func makeObject<T: NSManagedObject>(_ initialize: (T) -> Void = { _ in }) -> T {
         let object = T(context: self)
         initialize(object)
         return object
