@@ -31,9 +31,7 @@ public extension NSPersistentContainer {
         }
         var error: Error?
         loadPersistentStores {
-            $1.map {
-                error = $0
-            }
+            error = error ?? $1
         }
         try error.map {
             throw $0
