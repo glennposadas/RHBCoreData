@@ -5,8 +5,8 @@ import XCTest
 
 extension NSPersistentContainer {
     static func testContainerByLoadingTestModelInMemory() -> NSPersistentContainer {
-        return NSPersistentContainer(inMemory: .testModel) ~ {
-            try! $0.loadPersistentStoresSync()
-        }
+        let p = NSPersistentContainer(inMemory: .testModel)
+        try! p.loadPersistentStoresSync()
+        return p
     }
 }
