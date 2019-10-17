@@ -1,7 +1,7 @@
 import CoreData
 
 public final class BackgroundManagedObjectContext {
-    public private(set) var context: NSManagedObjectContext?
+    var context: NSManagedObjectContext?
 
     public init(_ context: NSManagedObjectContext) {
         self.context = context
@@ -34,11 +34,10 @@ public extension BackgroundManagedObjectContext {
         performTask { context in
             context.reset()
             defer { context.reset() }
-            let resultError: Error?
+            var resultError: Error?
             do {
                 try taskBlock(context)
                 try context.saveChanges()
-                resultError = nil
             } catch {
                 resultError = error
             }
