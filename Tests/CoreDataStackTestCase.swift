@@ -7,7 +7,7 @@ import XCTest
 
 extension CoreDataStack {
     func createTestEntity(id: String, _ block: @escaping (Result<TestEntity, Error>) -> Void) {
-        writingContext.write(errorBlock: {_ in}) { context in
+        writingContext.write(errorBlock: { _ in }) { context in
             let t = context.makeObject { (x: TestEntity) in
                 x.id = id
             }
@@ -263,11 +263,10 @@ class CoreDataStackTestCase: XCTestCase {
         var ent: TestEntity!
 
         let context = container.newBackgroundContext()
-            context.performAndWait {
-                ent = TestEntity(context: context)
-                try! context.save()
-            }
-        
+        context.performAndWait {
+            ent = TestEntity(context: context)
+            try! context.save()
+        }
 
         container.performBackgroundTask { context in
             XCTAssertNotNil(context.existing(ent))

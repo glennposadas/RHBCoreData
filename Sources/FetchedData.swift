@@ -6,7 +6,7 @@ public final class FetchedData<T: NSFetchRequestResult> {
 
     public init(_ controller: NSFetchedResultsController<T>) {
         self.controller = controller
-        blocks = FetchedDataBlocks(controller)
+        self.blocks = FetchedDataBlocks(controller)
     }
 }
 
