@@ -2,12 +2,11 @@ import CoreData
 import RHBCoreData
 import RHBCoreDataTestUtilities
 import RHBFoundation
-import RHBFoundationTestUtilities
 import XCTest
 
 extension CoreDataStack {
     func createTestEntity(id: String, _ block: @escaping (Result<TestEntity, Error>) -> Void) {
-        writingContext.write(errorBlock: {_ in}) { context in
+        writingContext.write(errorBlock: { _ in }) { context in
             let t = context.makeObject { (x: TestEntity) in
                 x.id = id
             }
@@ -148,7 +147,8 @@ class CoreDataStackTestCase: XCTestCase {
     func testFulfiller() {
         let N = 10
         (0..<N * 2).forEach { index in
-            let ful = expectation(description: "\(#function) \(index)").fulfiller
+            let ex = expectation(description: "\(#function) \(index)")
+            let ful = DeinitBlock { ex.fulfill() }
             if index.isMultiple(of: 2) {
                 return
             }
@@ -263,11 +263,10 @@ class CoreDataStackTestCase: XCTestCase {
         var ent: TestEntity!
 
         let context = container.newBackgroundContext()
-            context.performAndWait {
-                ent = TestEntity(context: context)
-                try! context.save()
-            }
-        
+        context.performAndWait {
+            ent = TestEntity(context: context)
+            try! context.save()
+        }
 
         container.performBackgroundTask { context in
             XCTAssertNotNil(context.existing(ent))

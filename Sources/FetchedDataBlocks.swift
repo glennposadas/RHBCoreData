@@ -12,7 +12,7 @@ public final class FetchedDataBlocks<T: NSFetchRequestResult> {
 
     init(_ controller: NSFetchedResultsController<T>) {
         self.controller = controller
-        delegateWithBlocks = FetchedResultsControllerDelegateWithBlocks(self)
+        self.delegateWithBlocks = FetchedResultsControllerDelegateWithBlocks(self)
         controller.delegate = delegateWithBlocks
     }
 
@@ -39,13 +39,11 @@ final class FetchedResultsControllerDelegateWithBlocks<T: NSFetchRequestResult>:
     }
 
     func controller(_: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        // swiftlint:disable force_cast
         blocks.didChangeObject[type]?(anObject as! T, indexPath ?? newIndexPath!, newIndexPath ?? indexPath!)
-        // swiftlint:enable force_cast
     }
 
     func controller(_: NSFetchedResultsController<NSFetchRequestResult>, sectionIndexTitleForSectionName sectionName: String) -> String? {
-        return blocks.sectionIndexTitle?(sectionName)
+        blocks.sectionIndexTitle?(sectionName)
     }
 
     func controller(_: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
